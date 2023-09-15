@@ -37,16 +37,17 @@ class MyPainting(QWidget):
 
 
 def draw(p, t, x, y):
+    "Draws a Tree depending on p as paintEvent t as a instance of the decision tree, x and y as the coordinates "
     if isinstance(t, dtree.TreeLeaf):
-        p.drawText(x-3, y+15, 'T' if t.cvalue else 'F')
+        p.drawText(int(x-3), int(y+15), 'T' if t.cvalue else 'F')
         return x, x+20
     xx = x
     anchors = []
     for b in t.branches:
         mid, xx = draw(p, t.branches[b], xx, y+70)
-        p.drawText(mid-3, y+68, str(b))
+        p.drawText(int(mid-3), int(y+68), str(b))
         anchors.append(mid)
-    newMid = (x+xx)/2
+    newMid = (x+xx)//2
     p.drawText(newMid-7, y+15, t.attribute.name)
     p.drawEllipse(newMid-15, y, 30, 20)
     for m in anchors:
@@ -63,6 +64,7 @@ class MyMainWindow( QMainWindow ):
 
 
 def drawTree(tree):
+    "Shows the drawn Tree"
     application = QApplication(sys.argv)
     win = MyMainWindow(tree)  
 
