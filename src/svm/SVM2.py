@@ -40,35 +40,55 @@ kernel_matrix = compute_kernel_matrix(inputs, kernel)
 # Ausgabe der Kernelmatrix
 print(kernel_matrix)
 
+alpha = [0.0] * N
+
 
 def objective (alpha):
-    return  0.5* numpy.sum(numpy.sum(alpha*alpha*kernel_matrix, axis=0),axis=1) - numpy.sum(alpha,axis=1)
+    obf = 0 
+    alphas = 0
+    for i in range(N):
+        for j in range(N):
+          obf = obf + alpha[i]*alpha[j]*kernel_matrix[i][j]
+    for i in range(N):
+        alphas = alphas + alpha[i]
+    return  0.5 * obf - alphas 
+gleichung = 0 
 
-def gleichung (alpha):
-    numpy.sum(alpha*targets, axis=1)
+
+def gleichung ():
+    gleichung = 0.0
+    for i in range(N):
+        gleichung =  alpha[i] * targets[i]
+    return gleichung 
 
 constraint={'type':'eq', 'fun':gleichung},
 
 # Beschränkung alpha
-C = 1.0  
-alpha_bounds = Bounds(0, C)
+#C = 1.0  
+#alpha_bounds = Bounds(0, C)
 
-ret = minimize(objective, 0, bounds = alpha_bounds, constraints=constraint)
+start = [0.0] * N
 
-alpha = ret['x']
+
+ret = minimize(objective, start, constraints = constraint)
+
+alphamin = ret['x']
 
 threshold = 1e-5  
-almost_zero_alphas = []
-for alpha_i in alpha:
-    if alpha_i < threshold:
-        almost_zero_alphas.append(alpha_i)
+non_zero_alphas = []
+nz_x= []
+nz_t= []
 
+for i in alphamin:
+    if alphamin[i] > threshold: 
+        non_zero_alphas.append(alphamin[i])
+        nz_x.append(inputs[i])
+        nz_t.append(targets[i])
+        
 def calculate_b(alpha, targets, kernel_matrix, s):
     b_sum = 0.0
     for i in range(len(alpha)):
         b_sum += alpha[i] * targets[i] * kernel_matrix[s, i]
-
-    # Subtrahieren Sie t_s
     b = b_sum - targets[s]
     return b
 
@@ -76,10 +96,9 @@ def indicator(alpha, targets, kernel_matrix, s):
     indicator_s = 0.0
     for i in range(N):
         indicator_s += alpha[i] * targets[i] * kernel_matrix[s, i]
-
-    # Subtrahieren Sie t_s
     indi = indicator_s - calculate_b (alpha, targets, kernel_matrix, s)
     return indi
+
 
 plt.plot([p[0] for p in classA] ,
          [p[1] for p in classA] ,
