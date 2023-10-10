@@ -38,11 +38,22 @@ def compute_kernel_matrix(data, kernel_function):
 kernel_matrix = compute_kernel_matrix(inputs, kernel)
 
 # Ausgabe der Kernelmatrix
-print(kernel_matrix)
+#print("Kernel_matrix",kernel_matrix)
 
+# IMPLEMENTATION
+#
+# 0 - setup variables
+# 1 - objective
+# 2 - start
+# 3 - bounds
+# 4 - constraints
+# 5 - MINIMIZE (1, 2, 3, 4)
+# 6 - resulting vector
+
+# 0 - setup variables
 alpha = [0.0] * N
 
-
+# 1 - objective
 def objective (alpha):
     obf = 0 
     alphas = 0
@@ -52,39 +63,55 @@ def objective (alpha):
     for i in range(N):
         alphas = alphas + alpha[i]
     return  0.5 * obf - alphas 
-gleichung = 0 
+
+#objective = lambda alpha: .. TODO Wie muss die Funktion strukturiert sein?
 
 
-def gleichung ():
-    gleichung = 0.0
-    for i in range(N):
-        gleichung =  alpha[i] * targets[i]
+# 2 - start
+start = numpy.zeros(N) #Why this start vector step-up. Maybe better np.zeros(N)
+#print("Start",start)
+
+# 3 - bounds
+C = 1.0  #Slack variable C
+B = [(0, C) for b in range(N)]
+
+# 4 - constraints
+#gleichung = 0 #TODO Wofür?
+def zerofun(alpha, targets):
+    # gleichung = 0.0
+    # for i in range(N):
+    #     gleichung =  alpha[i] * targets[i]
+    gleichung = numpy.dot(alpha,targets)
     return gleichung 
 
-constraint={'type':'eq', 'fun':gleichung},
+zerofun = lambda alpha: numpy.dot(alpha,targets)
+    
+#constraints
+XC = {'type':'eq', 'fun':zerofun},
 
-# Beschränkung alpha
-#C = 1.0  
-#alpha_bounds = Bounds(0, C)
+# 5 - MINIMIZE (1, 2, 3, 4)
+ret = minimize(objective, start, bounds=B, constraints = XC)
 
-start = [0.0] * N
-
-
-ret = minimize(objective, start, constraints = constraint)
-
+# 6 - resulting vector
 alphamin = ret['x']
+
+print("alphamin")
+print(alphamin)
+plt.plot(alphamin)
+
 
 threshold = 1e-5  
 non_zero_alphas = []
 nz_x= []
 nz_t= []
 
-for i in alphamin:
+# TODO What is the part below doing?
+for i in range(len(alphamin)):
     if alphamin[i] > threshold: 
         non_zero_alphas.append(alphamin[i])
         nz_x.append(inputs[i])
         nz_t.append(targets[i])
-        
+    
 def calculate_b(alpha, targets, kernel_matrix, s):
     b_sum = 0.0
     for i in range(len(alpha)):
@@ -99,7 +126,9 @@ def indicator(alpha, targets, kernel_matrix, s):
     indi = indicator_s - calculate_b (alpha, targets, kernel_matrix, s)
     return indi
 
+# 6 Plotting
 
+#See the data
 plt.plot([p[0] for p in classA] ,
          [p[1] for p in classA] ,
          'b.') 
@@ -111,3 +140,16 @@ plt.axis('equal') # Force same scale on both axes
 plt.savefig('svmplot.pdf') # Save a copy in a file
 plt .show() # Show the plot on the screen
 print('test')
+
+#6.1 Plotting the Decision Boundary
+# xgrid=numpy. linspace (-5, 5)
+# ygrid=numpy. linspace (-4, 4)
+
+# grid=numpy. array ( [ [ indicator (x , y)
+#                        for x in xgrid ]
+#                      for y in ygrid ])
+
+# plt . contour (xgrid , ygrid , grid ,
+#                (-1.0, 0.0 , 1.0),
+#                colors=('red', 'black' , 'blue' ),
+#                linewidths =(1, 3 , 1))
