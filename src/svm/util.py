@@ -76,7 +76,16 @@ def indicator(alpha, targets, data, s):
         scalar: indicates the class [-1, 0, +1]
     """
     indicator_s = 0.0
-    for i in range(len(alpha)):
-        indicator_s += alpha[i] * targets[i] * calculate_kernel_vector(s, data)[i]
-    indi = indicator_s - calculate_b (alpha, targets, data, s)
-    return indi
+    for i in range(len(data)):
+        indicator_s += alpha[i] * targets[i] * kernel(s, data[i])
+    #indi = indicator_s - calculate_b (alpha, targets, data, s)
+    return indicator_s
+
+def ind(datap, data):
+	length = len(data)
+	s = 0
+
+	for i in range(length):
+		v = usedKernel(datap, data[i][1][:-1], dimen)
+		s = s + data[i][0] * data[i][1][-1] * v
+	return s
