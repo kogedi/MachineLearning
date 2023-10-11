@@ -5,17 +5,17 @@ from scipy.optimize import Bounds
 from util import *
 
 #******** SETUP VARIABLE PARAMETERS ***********
-svm1 = SVM(kernel_choice='poly',exponent=2,slack_c=1) 
+svm1 = SVM(kernel_choice='poly',exponent=3,slack_c=10) 
 
 #Set Random to same values for every iteration
 numpy.random.seed(100)
 
 # Data Generation
 classA = numpy. concatenate (
-    (numpy.random.randn(10, 2) * 0.2 + [1.5, 0.5],
-     numpy.random.randn(10, 2) * 0.2 + [-1.5, 0.5]))
+    (numpy.random.randn(10, 2) * 0.2 + [1, 0.5],        #[1, 0.5]        #[1,5 0.5]
+     numpy.random.randn(10, 2) * 0.2 + [-1, 0.5]))      #[-1, 0.5]       #[-1.5, 0.5]
 
-classB = numpy.random.randn(20, 2) * 0.2 + [0.0 , -0.5]
+classB = numpy.random.randn(20, 2) * 0.2 + [0.0 , 0.5] #[0.0 , 0]       #[0.0 , -0.5]
 
 inputs = numpy. concatenate (( classA , classB ))
 targets = numpy. concatenate ((numpy.ones(classA.shape[0]) , - numpy.ones ( classB.shape[ 0 ] ) ) ) 
