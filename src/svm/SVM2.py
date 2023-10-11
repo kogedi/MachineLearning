@@ -5,7 +5,7 @@ from scipy.optimize import Bounds
 from util import *
 
 #******** SETUP VARIABLE PARAMETERS ***********
-svm1 = SVM(kernel_choice='rbf',exponent=3,sigma=0.1,slack_c=1) 
+svm1 = SVM(kernel_choice='rbf',exponent=1,sigma=1,slack_c=3) 
 
 #Set Random to same values for every iteration
 numpy.random.seed(100)
@@ -112,7 +112,8 @@ plt.savefig('svmplot.pdf') # Save a copy in a file
 #plt .show() # Show the plot on the screen
 print('test erfolgreich')
 
-
+#xgrid=numpy. linspace (-5, 5)
+#ygrid=numpy. linspace (-4, 4)
 # 10 - Plotting the Decision Boundary
 xgrid=numpy. linspace (-5, 5)
 ygrid=numpy. linspace (-4, 4)
