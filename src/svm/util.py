@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import Bounds
 
 class SVM:
-    def __init__(self, kernel_choice, exponent, slack_c):
+    def __init__(self, kernel_choice, exponent, sigma, slack_c):
         """init of the Support Vector machine class
 
         Args:
@@ -25,6 +25,8 @@ class SVM:
             self.exponent = exponent
         else:
             self.exponent = 2
+            
+        self.sigma = sigma
         
     def poly(self, arrayx,arrayy):
         """generates a polynomial Kernal
@@ -39,7 +41,21 @@ class SVM:
         """
         ploy = (numpy.dot(numpy.transpose(arrayx),arrayy)+1)**self.exponent
         return  ploy
-    #def rbf(self,arrayx, arrayy):
+    
+    
+    def rbf(self,arrayx, arrayy):
+        """Radial Basis Function (RBF) kernel is an exponential kernel
+
+        Args:
+            arrayx (_array_): array of data
+            arrayy (array): array of labels
+
+        Returns:
+            scalar: exponential kernel result
+        """
+        rbf = numpy.exp((numpy.linalg.norm(arrayx-arrayy))/(2*self.sigma**2))
+        return rbf
+        
     def lin(self, arrayx, arrayy):
         """linear Kernel
 

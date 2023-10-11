@@ -5,7 +5,7 @@ from scipy.optimize import Bounds
 from util import *
 
 #******** SETUP VARIABLE PARAMETERS ***********
-svm1 = SVM(kernel_choice='poly',exponent=3,slack_c=10) 
+svm1 = SVM(kernel_choice='rbf',exponent=3,sigma=0.1,slack_c=1) 
 
 #Set Random to same values for every iteration
 numpy.random.seed(100)
