@@ -33,7 +33,7 @@ kernel_matrix = calculate_P_kernel_matrix(inputs,targets)
 # Ausgabe der Kernelmatrix
 #print("Kernel_matrix",kernel_matrix)
 
-#************ IMPLEMENTATION ******************
+#************ IMPLEMENTATION Outline ******************
 #
 # 0 - setup variables
 # 1 - objective
@@ -47,41 +47,21 @@ kernel_matrix = calculate_P_kernel_matrix(inputs,targets)
 # 9 - Plotting decision boundaries
 
 # 0 - setup variables
-alpha = numpy.zeros(N) #[0.0] * N
+alpha = numpy.zeros(N)
 
 # 1 - objective
-def objective (alpha):
-    obf = 0 
-    alphas = 0
-    for i in range(N):
-        for j in range(N):
-          obf = obf + alpha[i]*alpha[j]*kernel_matrix[i][j]
-    for i in range(N):
-        alphas = alphas + alpha[i]
-    return  0.5 * obf - alphas 
-
-#objective = lambda alpha: .. TODO Wie muss die Funktion strukturiert sein?
-
+# See Formula (4) 0.5 * alpha.T * P *alpha - sum(alpha)
+objective = lambda alpha: 0.5* numpy.dot(numpy.dot(alpha.T,kernel_matrix),alpha) - numpy.sum(alpha)
 
 # 2 - start
-start = numpy.zeros(N) #Why this start vector step-up. Maybe better np.zeros(N)
-#print("Start",start)
+start = numpy.ones(N) #Why this start vector step-up. Maybe better np.zeros(N)
 
 # 3 - bounds
 c = 1.0  #Slack variable C
 B = [(0, c) for b in range(N)]
 
 # 4 - constraints
-#gleichung = 0 #TODO Wofür?
-# def zerofun(alpha, targets):
-#     # gleichung = 0.0
-#     # for i in range(N):
-#     #     gleichung =  alpha[i] * targets[i]
-#     gleichung = numpy.dot(alpha,targets)
-#     return gleichung 
-
 zerofun = lambda alpha: numpy.dot(alpha,targets)
-    
 #constraints
 XC = {'type':'eq', 'fun':zerofun} #contraints zerofun to be ZERO
 
@@ -94,8 +74,11 @@ alphamin = ret['x']
 # 7 - plot alphamin
 #print("alphamin")
 #print(alphamin)
-plt.plot(alphamin)
-plt.show()
+# print("data")
+# print(inputs)
+# plt.plot(alphamin)
+# plt.plot(targets)
+# plt.show()
 
 # 8 - Separate non-zero alpha-Values and plot
 threshold = 1e-5  
@@ -108,8 +91,12 @@ for i in range(len(alphamin)):
         non_zero_alphas.append(alphamin[i])
         nz_x.append(inputs[i])
         nz_t.append(targets[i])
-plt.plot(non_zero_alphas)
-plt.show()
+        
+# plt.plot(non_zero_alphas)
+# plt.plot(nz_t)
+# plt.show()
+# print("Nonzero data")
+# print(nz_x)
         
 # 9 - Plotting decision boundaries
 plt.plot([p[0] for p in classA] ,
@@ -121,7 +108,7 @@ plt.plot([p[0] for p in classB],
 
 plt.axis('equal') # Force same scale on both axes 
 plt.savefig('svmplot.pdf') # Save a copy in a file
-plt .show() # Show the plot on the screen
+#plt .show() # Show the plot on the screen
 print('test')
 
 
@@ -135,7 +122,7 @@ grid=numpy. array ( [ [ indicator(non_zero_alphas, nz_t, nz_x, (x , y))
 
 grid = numpy.array(grid)
 
-plt . contour (xgrid , ygrid , grid ,
+plt.contour (xgrid , ygrid , grid ,
                (-1.0, 0.0 , 1.0),
                colors=('red', 'black' , 'blue' ),
                linewidths =(1, 3 , 1))

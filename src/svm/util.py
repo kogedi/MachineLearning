@@ -35,10 +35,10 @@ def calculate_P_kernel_matrix(data,targets):
 
 def calculate_kernel_vector(s, data):
     N = len(data)
-    kernel_vektor = []  
+    kernel_vector = []  
     for i in range(N):
-            kernel_vektor.append(kernel(s, data[i]))
-    return kernel_vektor 
+            kernel_vector.append(kernel(s, data[i]))
+    return kernel_vector 
 
 
 def calculate_b(non_zero_alpha, non_zero_targets, non_zero_data, s):
