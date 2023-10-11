@@ -13,9 +13,9 @@ class SVM:
         """
         if kernel_choice == 'lin':
             self.kernel = self.lin
-        if kernel_choice == 'poly':
+        elif kernel_choice == 'poly':
             self.kernel = self.poly
-        if kernel_choice == 'rbf':
+        elif kernel_choice == 'rbf':
             self.kernel = self.rbf
         else:
             print("Fail: Choose vaild Kernel")
@@ -53,7 +53,7 @@ class SVM:
         Returns:
             scalar: exponential kernel result
         """
-        rbf = numpy.exp((numpy.linalg.norm(arrayx-arrayy))/(2*self.sigma**2))
+        rbf = numpy.exp(-(numpy.linalg.norm(arrayx-arrayy))/(2*self.sigma**2))
         return rbf
         
     def lin(self, arrayx, arrayy):
@@ -120,12 +120,14 @@ class SVM:
             s (vectors): new datapoint
 
         Returns:
-            scalar: indicates the class [-1, 0, +1]
+            scalar: indicates the class by larger or smaller Zero
         """
         indicator_s = 0.0
         for i in range(len(data)):
             indicator_s += alpha[i] * targets[i] * self.kernel(s, data[i])
-        indi = indicator_s - self.calculate_b(alpha, targets, data, s) #TODO How to implement the threshold correctly?
+        calc_b = self.calculate_b(alpha, targets, data, s)
+        print("calc_b",calc_b)
+        indi = indicator_s - calc_b  #TODO How to implement the threshold correctly?
         return indi
 
     # def ind(self, datap, data):
