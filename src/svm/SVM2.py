@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from scipy.optimize import Bounds
 from util import *
 
+#******** SETUP VARIABLE PARAMETERS ***********
+svm1 = SVM(kernel_choice='poly',exponent=2,slack_c=1) 
+
 #Set Random to same values for every iteration
 numpy.random.seed(100)
 
@@ -12,7 +15,6 @@ classA = numpy. concatenate (
     (numpy.random.randn(10, 2) * 0.2 + [1.5, 0.5],
      numpy.random.randn(10, 2) * 0.2 + [-1.5, 0.5]))
 
-#print("classA",classA)
 classB = numpy.random.randn(20, 2) * 0.2 + [0.0 , -0.5]
 
 inputs = numpy. concatenate (( classA , classB ))
@@ -27,8 +29,7 @@ targets = targets [ permute ]
 
 
 # Berechnung der Kernelmatrix schon mit ti und tj 
-#P_matrix = pre_calculate_P_kernel(inputs, kernel)
-kernel_matrix = calculate_P_kernel_matrix(inputs,targets)
+P_kernel_matrix = svm1.calculate_P_kernel_matrix(inputs,targets)
 
 # Ausgabe der Kernelmatrix
 #print("Kernel_matrix",kernel_matrix)
@@ -51,14 +52,14 @@ alpha = numpy.zeros(N)
 
 # 1 - objective
 # See Formula (4) 0.5 * alpha.T * P *alpha - sum(alpha)
-objective = lambda alpha: 0.5* numpy.dot(numpy.dot(alpha.T,kernel_matrix),alpha) - numpy.sum(alpha)
+objective = lambda alpha: 0.5* numpy.dot(numpy.dot(alpha.T,P_kernel_matrix),alpha) - numpy.sum(alpha)
 
 # 2 - start
 start = numpy.ones(N) #Why this start vector step-up. Maybe better np.zeros(N)
 
 # 3 - bounds
-c = 1.0  #Slack variable C
-B = [(0, c) for b in range(N)]
+#Slack variable defined at the top
+B = [(0, svm1.c) for b in range(N)]
 
 # 4 - constraints
 zerofun = lambda alpha: numpy.dot(alpha,targets)
@@ -109,14 +110,14 @@ plt.plot([p[0] for p in classB],
 plt.axis('equal') # Force same scale on both axes 
 plt.savefig('svmplot.pdf') # Save a copy in a file
 #plt .show() # Show the plot on the screen
-print('test')
+print('test erfolgreich')
 
 
 # 10 - Plotting the Decision Boundary
 xgrid=numpy. linspace (-5, 5)
 ygrid=numpy. linspace (-4, 4)
 
-grid=numpy. array ( [ [ indicator(non_zero_alphas, nz_t, nz_x, (x , y))
+grid=numpy. array ( [ [ svm1.indicator(non_zero_alphas, nz_t, nz_x, (x , y))
                        for x in xgrid ]
                      for y in ygrid ])
 
@@ -126,4 +127,23 @@ plt.contour (xgrid , ygrid , grid ,
                (-1.0, 0.0 , 1.0),
                colors=('red', 'black' , 'blue' ),
                linewidths =(1, 3 , 1))
+
+
+
+#Safe Pictures
+
+import matplotlib.pyplot as plt
+
+# Get the filename from user input
+filename = input("Enter file name: ")
+
+# Create a simple plot
+
+# Save the plot with the provided filename
+if filename == "No":
+    print("Not safed")
+else:
+    plt.savefig(f"{filename}.png")
+    print(f"Plot saved as {filename}.png")
+
 plt.show()
