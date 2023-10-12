@@ -9,7 +9,10 @@ class SVM:
 
         Args:
             kernel_choice (str): Choose kernal 'lin', 'poly', 'rbf'
+            exponent (int): exponent of the polynomial
+            sigma (scalar): smoothness of the radial basis function, part of the exponent
             slack_c (int): Slack value that is necessary for noisy data
+            
         """
         if kernel_choice == 'lin':
             self.kernel = self.lin
@@ -56,11 +59,6 @@ class SVM:
         rbf = numpy.exp(-(numpy.linalg.norm(arrayx-arrayy))**2/(2*self.sigma**2))
         return rbf
     
-    # def radial(x, y, sig):
-	#     v = 0
-    #     for i in range(len(x)):
-	# 	    v = v + (x[i] - y[i]) ** 2
-	#     return math.e ** (- v / 2 / sig ** 2)
         
     def lin(self, arrayx, arrayy):
         """linear Kernel
@@ -73,6 +71,7 @@ class SVM:
             scalar: _description_
         """
         return numpy.dot(arrayx, arrayy)
+
 
     def calculate_P_kernel_matrix(self, data,targets):
         """calculates the P-kernel matrix, necessary for the objective function
@@ -108,8 +107,6 @@ class SVM:
         """
         #Choose one support vector out of the list
         sv = 1
-        
-        #kernel_vector = calculate_kernel_vector(s, non_zero_data)
         b_sum = 0.0
         for i in range(len(non_zero_alpha)):
             b_sum += non_zero_alpha[i] * non_zero_targets[i] *self.kernel(non_zero_data[sv], non_zero_data[i])
@@ -132,15 +129,5 @@ class SVM:
         for i in range(len(data)):
             indicator_s += alpha[i] * targets[i] * self.kernel(s, data[i])
         calc_b = self.calculate_b(alpha, targets, data, s)
-        #print("calc_b",calc_b)
-        indi = indicator_s - calc_b  #TODO How to implement the threshold correctly?
+        indi = indicator_s - calc_b  
         return indi
-
-    # def ind(self, datap, data):
-    #     length = len(data)
-    #     s = 0
-
-    #     for i in range(length):
-    #         v = usedKernel(datap, data[i][1][:-1], dimen)
-    #         s = s + data[i][0] * data[i][1][-1] * v
-    #     return s
