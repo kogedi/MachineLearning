@@ -53,8 +53,14 @@ class SVM:
         Returns:
             scalar: exponential kernel result
         """
-        rbf = numpy.exp(-(numpy.linalg.norm(arrayx-arrayy))/(2*self.sigma**2))
+        rbf = numpy.exp(-(numpy.linalg.norm(arrayx-arrayy))**2/(2*self.sigma**2))
         return rbf
+    
+    # def radial(x, y, sig):
+	#     v = 0
+    #     for i in range(len(x)):
+	# 	    v = v + (x[i] - y[i]) ** 2
+	#     return math.e ** (- v / 2 / sig ** 2)
         
     def lin(self, arrayx, arrayy):
         """linear Kernel
@@ -126,7 +132,7 @@ class SVM:
         for i in range(len(data)):
             indicator_s += alpha[i] * targets[i] * self.kernel(s, data[i])
         calc_b = self.calculate_b(alpha, targets, data, s)
-        print("calc_b",calc_b)
+        #print("calc_b",calc_b)
         indi = indicator_s - calc_b  #TODO How to implement the threshold correctly?
         return indi
 

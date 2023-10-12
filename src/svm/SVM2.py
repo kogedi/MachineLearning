@@ -5,8 +5,8 @@ from scipy.optimize import Bounds
 from util import *
 
 #******** SETUP VARIABLE PARAMETERS ***********
-svm1 = SVM(kernel_choice='rbf',exponent=2,sigma=1,slack_c=1) 
-svm2 = SVM(kernel_choice='poly',exponent=2,sigma=1,slack_c=1) 
+svm1 = SVM(kernel_choice='rbf',exponent=2,sigma=0.5,slack_c=10) 
+##svm2 = SVM(kernel_choice='poly',exponent=2,sigma=1,slack_c=1) 
 
 #Set Random to same values for every iteration
 numpy.random.seed(100)
@@ -32,9 +32,9 @@ numpy.random.seed(100)
 
 # Berechnung der Kernelmatrix schon mit ti und tj 
 P_kernel_matrix = svm1.calculate_P_kernel_matrix(inputs,targets)
-P_kernel_matrix2 = svm2.calculate_P_kernel_matrix(inputs,targets)
+#P_kernel_matrix2 = svm2.calculate_P_kernel_matrix(inputs,targets)
 plt.matshow(numpy.log(numpy.abs(P_kernel_matrix)+1e-10))
-plt.matshow(numpy.log(numpy.abs(P_kernel_matrix2)+1e-10))
+#plt.matshow(numpy.log(numpy.abs(P_kernel_matrix2)+1e-10))
 plt.show()
 
 # Ausgabe der Kernelmatrix
@@ -84,7 +84,7 @@ alphamin2 = ret2['x']
 #print(alphamin1)
 # print("data")
 # print(inputs)
-plt.plot(alphamin,linewidth=4)
+#plt.plot(alphamin,linewidth=4)
 plt.plot(alphamin2)
 # plt.plot(targets)
 plt.show()
