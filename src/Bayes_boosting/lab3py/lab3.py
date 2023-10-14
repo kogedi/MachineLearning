@@ -39,21 +39,22 @@ def computePrior(labels, W=None):
     if W is None:
         W = np.ones((Npts,1))/Npts
     else:
-        assert(W.shape[0] == Npts)
+        assert(W.shape[0] == Npts),"W.shape[0] == Npts condition."
     classes = np.unique(labels)
     Nclasses = np.size(classes)
     
     prior = np.zeros((Nclasses,1))
-
+    
     # TODO: compute the values of prior for each class!
     # ==========================
     for k,label in enumerate(classes):
         idx = labels==label
-        xlc = labels[idx] # Get the x for the class labels. Vectors are rows.
-        prior[k] = len(xlc)/Npts #
+        wli = W[idx]#.reshape((1,-1))  # Choose the weigths for the class
+        prior[k] = np.sum(wli)
     # ==========================
 
     return prior
+
 #Test Assignment 1
 # X,y =  genBlobs(centers=5)
 # priors = computePrior(y)
@@ -74,6 +75,7 @@ def mlParams(X, labels, W=None):
         W = np.ones((Npts,1))/float(Npts)
 
     mu  = np.zeros((Nclasses,Ndims))
+    w_sum = np.sum(W)
     #mu2 = np.zeros((Nclasses,Ndims))
     sigma = np.zeros((Nclasses,Ndims,Ndims))
 
@@ -83,15 +85,17 @@ def mlParams(X, labels, W=None):
     for k,label in enumerate(classes):
         idx = labels==label #Return Boolean Array with 'True' is condition hols
         xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
+        wli = W[idx].reshape((1,-1)) # Choose the weigths for the class
         for j in range(Ndims):
-            mu[k,j] = 1/len(xlc) * np.sum(xlc[:,j])
+            mu[k,j] = 1/( np.sum(wli)) * np.dot(wli,xlc[:,j].T) #len(xlc) *
             
     #Computation of sigma
     for k,label in enumerate(classes):
         idx = labels==label
         xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
+        wli = W[idx].reshape((1,-1)) # Choose the weigths for the class
         for j in range(Ndims):
-            sigma[k,j,j] = 1/len(xlc) * np.sum((xlc[:,j]-mu[k,j])**2)
+            sigma[k,j,j] = 1/np.sum(wli)* np.sum(np.dot(wli,(xlc[:,j]-mu[k,j])**2)) #len(xlc) 
     # ==========================
 
     return mu, sigma
@@ -117,18 +121,11 @@ def classifyBayes(X, prior, mu, sigma):
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
     for k in range(Nclasses):
-        # idx = labels==label
-        # xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
         # IMPLEMENTATION of formula (11)
-        for j in range(Npts):
-            x_j = X[j,:]
-            mu_k = mu[k]
-            sigma_inv_k = np.linalg.inv(sigma[k])
-            test = + math.log(prior[k])
-            logProb[k,j] = (- 0.5 * math.log(np.linalg.det(sigma_inv_k))
-                            - 0.5 * np.dot(np.dot((x_j - mu_k),(sigma_inv_k)) , (x_j - mu_k).T)
-                            + math.log(prior[k])
-                            )
+        for j in range(Npts):  
+            logProb[k,j] = (- 0.5 * np.log(np.linalg.det(sigma[k]))
+                - 0.5 * np.dot(np.dot((X[j,:] - mu[k]), np.linalg.inv(sigma[k])) , (X[j,:] - mu[k]).T)
+                + np.log(prior[k]))
     # ==========================
     
     # one possible way of finding max a-posteriori once
@@ -166,23 +163,23 @@ class BayesClassifier(object):
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
 
-X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X,labels)
-plotGaussian(X,labels,mu,sigma)
+# X, labels = genBlobs(centers=5)
+# mu, sigma = mlParams(X,labels)
+# plotGaussian(X,labels,mu,sigma)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+# testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+# plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+
+
+# testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
+# plotBoundary(BayesClassifier(), dataset='vowel',split=0.7)
 
 
 
-#testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
-
-
-
-plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # ## Boosting functions to implement
@@ -203,21 +200,38 @@ def trainBoost(base_classifier, X, labels, T=10):
     classifiers = [] # append new classifiers to this list
     alphas = [] # append the vote weight of the classifiers to this list
 
-    # The weights for the first iteration
+    # 0 The weights for the first iteration
     wCur = np.ones((Npts,1))/float(Npts)
 
     for i_iter in range(0, T):
-        # a new classifier can be trained like this, given the current weights
+        # 1 - a new classifier can be trained like this, given the current weights
         classifiers.append(base_classifier.trainClassifier(X, labels, wCur))
 
         # do classification for each point
-        vote = classifiers[-1].classify(X)
-
+        vote = classifiers[-1].classify(X) #+ 1 #TODO Woher kommt der Fehler?
         # TODO: Fill in the rest, construct the alphas etc.
         # ==========================
         
-        # alphas.append(alpha) # you will need to append the new alpha
+        # 2 - Compute error
+        error = 0.0
+        for i in range(Npts):
+            error += wCur[i,0]* ( 1 - (1 if vote[i] == labels[i] else 0))
+            
+        # 3 - Choose alpha
+        if error < 1.0:
+            alpha = 0.5 * math.log(1 - error) - math.log(error)
+        
+        # 4 Update weigths
+        for i in range(Npts):
+            wCur[i,0] = (wCur[i,0]) * np.exp(alpha* (-1 if vote[i] == labels[i] else 1))
+            
+        # 5 Normalizing so that sum(wCur) == 1
+        Z = np.sum(wCur)
+        wCur = wCur/Z
+        #print("np.sum(wCur)",np.sum(wCur))
+        alphas.append(alpha) # you will need to append the new alpha
         # ==========================
+        i_iter += 1
         
     return classifiers, alphas
 
@@ -272,7 +286,7 @@ class BoostClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
 
 
 

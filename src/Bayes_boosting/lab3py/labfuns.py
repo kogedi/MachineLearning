@@ -111,7 +111,7 @@ def fetchDataset(dataset='iris'):
     if dataset == 'iris':
         try:
             X = genfromtxt('.\src\Bayes_boosting\lab3py\irisX.txt', delimiter=',')
-            y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')#,dtype=np.int)-1
+            y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')-1 #,dtype=np.int
             pcadim = 2
         except FileNotFoundError:
             print("File not found!")
@@ -126,9 +126,8 @@ def fetchDataset(dataset='iris'):
         pcadim = 20
     elif dataset == 'vowel':
         try:
-            X = genfromtxt('.\src\Bayes_boosting\lab3py\vowelX.txt', delimiter=',')
-            X = genfromtxt('.\src\Bayes_boosting\lab3py\vowelX.txt', delimiter=',')
-            y = genfromtxt('.\src\Bayes_boosting\lab3py\vowelY.txt', delimiter=',')#,dtype=np.int)
+            X = genfromtxt('.\src\Bayes_boosting\lab3py\AvowelX.txt', delimiter=',')
+            y = genfromtxt('.\src\Bayes_boosting\lab3py\AvowelY.txt', delimiter=',')#,dtype=np.int)
             pcadim = 0
         except FileNotFoundError:
             print("File not found!")
