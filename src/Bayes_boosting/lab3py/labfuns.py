@@ -6,11 +6,13 @@ import matplotlib.cm as cm
 from matplotlib.patches import Ellipse
 from matplotlib.colors import ColorConverter
 import random as rnd
-from sklearn.datasets.samples_generator import make_blobs
+from sklearn.datasets import make_blobs #samples_generator import make_blobs
 from sklearn import decomposition, tree
+import os
 
-# import seaborn as sns
-# sns.set()
+
+import seaborn as sns
+sns.set()
 
 def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
     """
@@ -104,10 +106,15 @@ def trteSplitEven(X,y,pcSplit,seed=None):
 
 
 def fetchDataset(dataset='iris'):
+        
+    
     if dataset == 'iris':
-        X = genfromtxt('irisX.txt', delimiter=',')
-        y = genfromtxt('irisY.txt', delimiter=',',dtype=np.int)-1
-        pcadim = 2
+        try:
+            X = genfromtxt('.\src\Bayes_boosting\lab3py\irisX.txt', delimiter=',')
+            y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')#,dtype=np.int)-1
+            pcadim = 2
+        except FileNotFoundError:
+            print("File not found!")
     elif dataset == 'wine':
         X = genfromtxt('wineX.txt', delimiter=',')
         y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
@@ -118,9 +125,13 @@ def fetchDataset(dataset='iris'):
         y = genfromtxt('olivettifacesY.txt', delimiter=',',dtype=np.int)
         pcadim = 20
     elif dataset == 'vowel':
-        X = genfromtxt('vowelX.txt', delimiter=',')
-        y = genfromtxt('vowelY.txt', delimiter=',',dtype=np.int)
-        pcadim = 0
+        try:
+            X = genfromtxt('.\src\Bayes_boosting\lab3py\vowelX.txt', delimiter=',')
+            X = genfromtxt('.\src\Bayes_boosting\lab3py\vowelX.txt', delimiter=',')
+            y = genfromtxt('.\src\Bayes_boosting\lab3py\vowelY.txt', delimiter=',')#,dtype=np.int)
+            pcadim = 0
+        except FileNotFoundError:
+            print("File not found!")
     else:
         print("Please specify a dataset!")
         X = np.zeros(0)
@@ -253,8 +264,10 @@ def plotBoundary(classifier, dataset='iris', split=0.7):
             pass
         trClIdx = np.where(y[trIdx] == c)[0]
         teClIdx = np.where(y[teIdx] == c)[0]
-        plt.scatter(xTr[trClIdx,0],xTr[trClIdx,1],marker='o',c=color,s=40,alpha=0.5, label="Class "+str(c)+" Train")
-        plt.scatter(xTe[teClIdx,0],xTe[teClIdx,1],marker='*',c=color,s=50,alpha=0.8, label="Class "+str(c)+" Test")
+        plt.scatter(xTr[trClIdx, 0], xTr[trClIdx, 1], marker='o', color=color, s=40, alpha=0.5, label="Class " + str(c) + " Train")
+        plt.scatter(xTe[teClIdx, 0], xTe[teClIdx, 1], marker='*', color=color, s=50, alpha=0.8, label="Class " + str(c) + " Test")
+        #plt.scatter(xTr[trClIdx,0],xTr[trClIdx,1],marker='o',c=color,s=40,alpha=0.5, label="Class "+str(c)+" Train")
+        #plt.scatter(xTe[teClIdx,0],xTe[teClIdx,1],marker='*',c=color,s=50,alpha=0.8, label="Class "+str(c)+" Test")
     plt.legend(bbox_to_anchor=(1., 1), loc=2, borderaxespad=0.)
     fig.subplots_adjust(right=0.7)
     plt.show()

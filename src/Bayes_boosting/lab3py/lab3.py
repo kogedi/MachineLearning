@@ -21,6 +21,9 @@ from scipy import misc
 from imp import reload
 from labfuns import *
 import random
+import math
+
+
 
 
 # ## Bayes classifier functions to implement
@@ -39,15 +42,22 @@ def computePrior(labels, W=None):
         assert(W.shape[0] == Npts)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
-
+    
     prior = np.zeros((Nclasses,1))
 
     # TODO: compute the values of prior for each class!
     # ==========================
-    
+    for k,label in enumerate(classes):
+        idx = labels==label
+        xlc = labels[idx] # Get the x for the class labels. Vectors are rows.
+        prior[k] = len(xlc)/Npts #
     # ==========================
 
     return prior
+#Test Assignment 1
+# X,y =  genBlobs(centers=5)
+# priors = computePrior(y)
+# print("priors", priors)
 
 # NOTE: you do not need to handle the W argument for this part!
 # in:      X - N x d matrix of N data points
@@ -55,7 +65,7 @@ def computePrior(labels, W=None):
 # out:    mu - C x d matrix of class means (mu[i] - class i mean)
 #      sigma - C x d x d matrix of class covariances (sigma[i] - class i sigma)
 def mlParams(X, labels, W=None):
-    assert(X.shape[0]==labels.shape[0])
+    assert(X.shape[0]==labels.shape[0]), "Data and Label don't have the same length."
     Npts,Ndims = np.shape(X)
     classes = np.unique(labels)
     Nclasses = np.size(classes)
@@ -63,15 +73,34 @@ def mlParams(X, labels, W=None):
     if W is None:
         W = np.ones((Npts,1))/float(Npts)
 
-    mu = np.zeros((Nclasses,Ndims))
+    mu  = np.zeros((Nclasses,Ndims))
+    #mu2 = np.zeros((Nclasses,Ndims))
     sigma = np.zeros((Nclasses,Ndims,Ndims))
 
     # TODO: fill in the code to compute mu and sigma!
     # ==========================
-    
+    #Computation of mu
+    for k,label in enumerate(classes):
+        idx = labels==label #Return Boolean Array with 'True' is condition hols
+        xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
+        for j in range(Ndims):
+            mu[k,j] = 1/len(xlc) * np.sum(xlc[:,j])
+            
+    #Computation of sigma
+    for k,label in enumerate(classes):
+        idx = labels==label
+        xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
+        for j in range(Ndims):
+            sigma[k,j,j] = 1/len(xlc) * np.sum((xlc[:,j]-mu[k,j])**2)
     # ==========================
 
     return mu, sigma
+
+#Test Assignment 1
+# X, y =  genBlobs(centers=5)
+# mu, sigma = mlParams(X,y)
+# print("sigma",sigma)
+# plotGaussian(X,y,mu,sigma)
 
 # in:      X - N x d matrix of M data points
 #      prior - C x 1 matrix of class priors
@@ -83,10 +112,23 @@ def classifyBayes(X, prior, mu, sigma):
     Npts = X.shape[0]
     Nclasses,Ndims = np.shape(mu)
     logProb = np.zeros((Nclasses, Npts))
-
+    # print("logProb")
+    # print(logProb)
     # TODO: fill in the code to compute the log posterior logProb!
     # ==========================
-    
+    for k in range(Nclasses):
+        # idx = labels==label
+        # xlc = X[idx,:] # Get the x for the class labels. Vectors are rows.
+        # IMPLEMENTATION of formula (11)
+        for j in range(Npts):
+            x_j = X[j,:]
+            mu_k = mu[k]
+            sigma_inv_k = np.linalg.inv(sigma[k])
+            test = + math.log(prior[k])
+            logProb[k,j] = (- 0.5 * math.log(np.linalg.det(sigma_inv_k))
+                            - 0.5 * np.dot(np.dot((x_j - mu_k),(sigma_inv_k)) , (x_j - mu_k).T)
+                            + math.log(prior[k])
+                            )
     # ==========================
     
     # one possible way of finding max a-posteriori once
@@ -94,7 +136,12 @@ def classifyBayes(X, prior, mu, sigma):
     h = np.argmax(logProb,axis=0)
     return h
 
-
+# Test Assignment 2
+# X, y =  genBlobs(centers=5)
+# mu, sigma = mlParams(X,y)
+# priors = computePrior(y)
+# h = classifyBayes(X, priors, mu, sigma)
+# print("h", h)
 # The implemented functions can now be summarized into the `BayesClassifier` class, which we will use later to test the classifier, no need to add anything else here:
 
 
@@ -127,7 +174,7 @@ plotGaussian(X,labels,mu,sigma)
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 
 
 
@@ -135,7 +182,7 @@ plotGaussian(X,labels,mu,sigma)
 
 
 
-#plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # ## Boosting functions to implement
