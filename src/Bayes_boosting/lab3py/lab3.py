@@ -161,16 +161,16 @@ class BayesClassifier(object):
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
 
-# X, labels = genBlobs(centers=5)
-# mu, sigma = mlParams(X,labels)
-# plotGaussian(X,labels,mu,sigma)
+X, labels = genBlobs(centers=5)
+mu, sigma = mlParams(X,labels)
+plotGaussian(X,labels,mu,sigma)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 
-# testClassifier(BayesClassifier(), dataset='iris', split=0.7)
-# plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
+testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 
 # testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
@@ -264,7 +264,7 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
                         delta = 1
                     else:
                         delta = 0
-                    votes[pts][i] +=alphas[j]* delta        
+                    votes[pts][i] +=alphas[j]* delta		
 
         # ==========================
 
@@ -300,8 +300,10 @@ testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.
 
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
 
+
 print('iris')
 plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+
 
 # Now repeat the steps with a decision tree classifier.
 
