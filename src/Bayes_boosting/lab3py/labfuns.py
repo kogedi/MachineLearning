@@ -9,6 +9,7 @@ import random as rnd
 from sklearn.datasets import make_blobs #samples_generator import make_blobs
 from sklearn import decomposition, tree
 import os
+import getpass
 
 
 import seaborn as sns
@@ -107,36 +108,72 @@ def trteSplitEven(X,y,pcSplit,seed=None):
 
 def fetchDataset(dataset='iris'):
         
-    
-    if dataset == 'iris':
-        try:
-            X = genfromtxt('.\src\Bayes_boosting\lab3py\irisX.txt', delimiter=',')
-            y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')-1 #,dtype=np.int
-            pcadim = 2
-        except FileNotFoundError:
-            print("File not found!")
-    elif dataset == 'wine':
-        X = genfromtxt('wineX.txt', delimiter=',')
-        y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
-        pcadim = 0
-    elif dataset == 'olivetti':
-        X = genfromtxt('olivettifacesX.txt', delimiter=',')
-        X = X/255
-        y = genfromtxt('olivettifacesY.txt', delimiter=',',dtype=np.int)
-        pcadim = 20
-    elif dataset == 'vowel':
-        try:
-            X = genfromtxt('.\src\Bayes_boosting\lab3py\AvowelX.txt', delimiter=',')
-            y = genfromtxt('.\src\Bayes_boosting\lab3py\AvowelY.txt', delimiter=',')#,dtype=np.int)
-            pcadim = 0
-        except FileNotFoundError:
-            print("File not found!")
-    else:
-        print("Please specify a dataset!")
-        X = np.zeros(0)
-        y = np.zeros(0)
-        pcadim = 0
 
+    # Get the username of the currently logged-in user
+    username = getpass.getuser()
+
+    #print("Username:", username)
+    if username == 'Konrad Dittrich':
+        
+        if dataset == 'iris':
+            try:
+                X = genfromtxt('.\src\Bayes_boosting\lab3py\irisX.txt', delimiter=',')
+                y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')-1 #,dtype=np.int
+                pcadim = 2
+            except FileNotFoundError:
+                print("File not found!")
+        elif dataset == 'wine':
+            X = genfromtxt('wineX.txt', delimiter=',')
+            y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
+            pcadim = 0
+        elif dataset == 'olivetti':
+            X = genfromtxt('olivettifacesX.txt', delimiter=',')
+            X = X/255
+            y = genfromtxt('olivettifacesY.txt', delimiter=',',dtype=np.int)
+            pcadim = 20
+        elif dataset == 'vowel':
+            try:
+                X = genfromtxt('.\src\Bayes_boosting\lab3py\AvowelX.txt', delimiter=',')
+                y = genfromtxt('.\src\Bayes_boosting\lab3py\AvowelY.txt', delimiter=',')#,dtype=np.int)
+                pcadim = 0
+            except FileNotFoundError:
+                print("File not found!")
+        else:
+            print("Please specify a dataset!")
+            X = np.zeros(0)
+            y = np.zeros(0)
+            pcadim = 0
+            
+    elif username == 'claas-christophheitzhausen':
+        if dataset == 'iris':
+            try:
+                X = genfromtxt('./src/Bayes_boosting/lab3py/irisX.txt', delimiter=',')
+                y = genfromtxt('./src/Bayes_boosting/lab3py/irisY.txt', delimiter=',')-1 #,dtype=np.int
+                pcadim = 2
+            except FileNotFoundError:
+                print("File not found!")
+        elif dataset == 'wine':
+            X = genfromtxt('wineX.txt', delimiter=',')
+            y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
+            pcadim = 0
+        elif dataset == 'olivetti':
+            X = genfromtxt('olivettifacesX.txt', delimiter=',')
+            X = X/255
+            y = genfromtxt('olivettifacesY.txt', delimiter=',',dtype=np.int)
+            pcadim = 20
+        elif dataset == 'vowel':
+            try:
+                X = genfromtxt('./src/Bayes_boosting/lab3py/AvowelX.txt', delimiter=',')
+                y = genfromtxt('./src/Bayes_boosting/lab3py/AvowelY.txt', delimiter=',')#,dtype=np.int)
+                pcadim = 0
+            except FileNotFoundError:
+                print("File not found!")
+        else:
+            print("Please specify a dataset!")
+            X = np.zeros(0)
+            y = np.zeros(0)
+            pcadim = 0
+            
     return X,y,pcadim
 
 
