@@ -124,7 +124,7 @@ def classifyBayes(X, prior, mu, sigma):
         # IMPLEMENTATION of formula (11)
         for j in range(Npts):  
             logProb[k,j] = (- 0.5 * np.log(np.linalg.det(sigma[k]))
-                - 0.5 * np.dot(np.dot((X[j,:] - mu[k]), np.linalg.inv(sigma[k])) , (X[j,:] - mu[k]).T)
+                - 0.5 * np.dot(np.dot((X[j] - mu[k]), np.linalg.inv(sigma[k])) , (X[j] - mu[k]).T)
                 + np.log(prior[k]))
     # ==========================
     
@@ -246,17 +246,22 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
 
     # if we only have one classifier, we may just classify directly
     if Ncomps == 1:
-        return classifiers[0].classify(X)
+        classifiers= classifiers[0].classify(X)
+        return classifiers
     else:
         votes = np.zeros((Npts,Nclasses))
+    #     # TODO: implement classificiation when we have trained several classifiers!
+    #     # here we can do it by filling in the votes vector with weighted votes
+    #     # ==========================
+        for j in range(Npts):
+            for i in range(Ncomps):
+                x_j = X[j]
+                classifiers_i_j = classifiers[i].classify(x_j.T)[1]       
+                votes[j,:] += (alphas[i] * classifiers_i_j)
+         
+    #     # ==========================
 
-        # TODO: implement classificiation when we have trained several classifiers!
-        # here we can do it by filling in the votes vector with weighted votes
-        # ==========================
-        
-        # ==========================
-
-        # one way to compute yPred after accumulating the votes
+    #     # one way to compute yPred after accumulating the votes
         return np.argmax(votes,axis=1)
 
 
