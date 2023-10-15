@@ -25,11 +25,9 @@ import math
 
 
 
-
 # ## Bayes classifier functions to implement
 # 
 # The lab descriptions state what each function should do.
-
 
 # NOTE: you do not need to handle the W argument for this part!
 # in: labels - N vector of class labels
@@ -124,7 +122,7 @@ def classifyBayes(X, prior, mu, sigma):
         # IMPLEMENTATION of formula (11)
         for j in range(Npts):  
             logProb[k,j] = (- 0.5 * np.log(np.linalg.det(sigma[k]))
-                - 0.5 * np.dot(np.dot((X[j] - mu[k]), np.linalg.inv(sigma[k])) , (X[j] - mu[k]).T)
+                - 0.5 * np.dot(np.dot((X[j,:] - mu[k]), np.linalg.inv(sigma[k])) , (X[j,:] - mu[k]).T)
                 + np.log(prior[k]))
     # ==========================
     
@@ -181,11 +179,9 @@ class BayesClassifier(object):
 
 
 
-
 # ## Boosting functions to implement
 # 
 # The lab descriptions state what each function should do.
-
 
 # in: base_classifier - a classifier of the type that we will boost, e.g. BayesClassifier
 #                   X - N x d matrix of N data points
@@ -215,23 +211,28 @@ def trainBoost(base_classifier, X, labels, T=10):
         # 2 - Compute error
         error = 0.0
         for i in range(Npts):
-            error += wCur[i,0]* ( 1 - (1 if vote[i] == labels[i] else 0))
+            error += wCur[i,0]* ( 1 - (1 if vote[i] == labels[i] else 0)) #yes
             
         # 3 - Choose alpha
         if error < 1.0:
-            alpha = 0.5 * math.log(1 - error) - math.log(error)
+            error += 0.0000000000000000001
+            alpha = 0.5 *(math.log(1 - error) - math.log(error)) #yes
         
         # 4 Update weigths
         for i in range(Npts):
             wCur[i,0] = (wCur[i,0]) * np.exp(alpha* (-1 if vote[i] == labels[i] else 1))
             
         # 5 Normalizing so that sum(wCur) == 1
-        Z = np.sum(wCur)
-        wCur = wCur/Z
+        Z = np.sum(wCur)            #yes
+        wCur = wCur/Z               #yws
         #print("np.sum(wCur)",np.sum(wCur))
         alphas.append(alpha) # you will need to append the new alpha
         # ==========================
-        i_iter += 1
+        #i_iter += 1
+        #error = 0
+        
+
+        #==========================
         
     return classifiers, alphas
 
@@ -250,23 +251,27 @@ def classifyBoost(X, classifiers, alphas, Nclasses):
         return classifiers
     else:
         votes = np.zeros((Npts,Nclasses))
-    #     # TODO: implement classificiation when we have trained several classifiers!
-    #     # here we can do it by filling in the votes vector with weighted votes
-    #     # ==========================
-        for j in range(Npts):
-            for i in range(Ncomps):
-                x_j = X[j]
-                classifiers_i_j = classifiers[i].classify(x_j.T)[1]       
-                votes[j,:] += (alphas[i] * classifiers_i_j)
-         
-    #     # ==========================
 
-    #     # one way to compute yPred after accumulating the votes
+        # TODO: implement classificiation when we have trained several classifiers!
+        # here we can do it by filling in the votes vector with weighted votes
+        # ==========================
+            
+        for j in range(Ncomps):     #over all classifier
+            vote = classifiers[j].classify(X)
+            for pts in range(Npts): #over all data points 
+                for i in range(Nclasses):
+                    if vote[pts] == i:
+                        delta = 1
+                    else:
+                        delta = 0
+                    votes[pts][i] +=alphas[j]* delta        
+
+        # ==========================
+
+        # one way to compute yPred after accumulating the votes
         return np.argmax(votes,axis=1)
 
-
 # The implemented functions can now be summarized another classifer, the `BoostClassifier` class. This class enables boosting different types of classifiers by initializing it with the `base_classifier` argument. No need to add anything here.
-
 
 # NOTE: no need to touch this
 class BoostClassifier(object):
@@ -285,63 +290,48 @@ class BoostClassifier(object):
     def classify(self, X):
         return classifyBoost(X, self.classifiers, self.alphas, self.nbr_classes)
 
-
 # ## Run some experiments
 # 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
-
+print('boost')
 testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
-
 
 
 #testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
 
-
-
-#plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
-
+print('iris')
+plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
 
 # Now repeat the steps with a decision tree classifier.
 
-
 #testClassifier(DecisionTreeClassifier(), dataset='iris', split=0.7)
-
 
 
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
 
 
-
 #testClassifier(DecisionTreeClassifier(), dataset='vowel',split=0.7)
-
 
 
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='vowel',split=0.7)
 
 
-
 #plotBoundary(DecisionTreeClassifier(), dataset='iris',split=0.7)
 
 
-
 #plotBoundary(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='iris',split=0.7)
-
 
 # ## Bonus: Visualize faces classified using boosted decision trees
 # 
 # Note that this part of the assignment is completely voluntary! First, let's check how a boosted decision tree classifier performs on the olivetti data. Note that we need to reduce the dimension a bit using PCA, as the original dimension of the image vectors is `64 x 64 = 4096` elements.
 
-
 #testClassifier(BayesClassifier(), dataset='olivetti',split=0.7, dim=20)
-
 
 
 #testClassifier(BoostClassifier(DecisionTreeClassifier(), T=10), dataset='olivetti',split=0.7, dim=20)
 
-
 # You should get an accuracy around 70%. If you wish, you can compare this with using pure decision trees or a boosted bayes classifier. Not too bad, now let's try and classify a face as belonging to one of 40 persons!
-
 
 #X,y,pcadim = fetchDataset('olivetti') # fetch the olivetti data
 #xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,0.7) # split into training and testing
@@ -358,4 +348,3 @@ testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.
 # visualize the test point together with the training points used to train
 # the class that the test point was classified to belong to
 #visualizeOlivettiVectors(xTr[yTr == yPr[testind],:], xTe[testind,:])
-
