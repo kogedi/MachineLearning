@@ -18,7 +18,7 @@
 
 import numpy as np
 from scipy import misc
-from imp import reload
+#from imp import reload
 from labfuns import *
 import random
 import math
@@ -161,20 +161,21 @@ class BayesClassifier(object):
 # Call `genBlobs` and `plotGaussian` to verify your estimates.
 
 
-X, labels = genBlobs(centers=5)
-mu, sigma = mlParams(X,labels)
-plotGaussian(X,labels,mu,sigma)
+# X, labels = genBlobs(centers=5)
+# mu, sigma = mlParams(X,labels)
+# plotGaussian(X,labels,mu,sigma)
 
 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
+# print("Test classifieres: iris")
+# testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+# plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
-testClassifier(BayesClassifier(), dataset='iris', split=0.7)
-plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
-
-
-# testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
-# plotBoundary(BayesClassifier(), dataset='vowel',split=0.7)
+print("Test classifieres: vowels")
+testClassifier(BayesClassifier(), dataset='vowel', split=0.7)
+print("Plot Boundary: vowels")
+plotBoundary(BayesClassifier(), dataset='vowel',split=0.7)
 
 
 
@@ -294,15 +295,17 @@ class BoostClassifier(object):
 # 
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
-print('boost')
-testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+# print('Test boosted iris')
+# testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='iris',split=0.7)
+# print('plot boundary iris')
+# plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
+
+print('Test boosted vowels')
+testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
+print('plot boundary vowel')
+plotBoundary(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
 
 
-#testClassifier(BoostClassifier(BayesClassifier(), T=10), dataset='vowel',split=0.7)
-
-
-print('iris')
-plotBoundary(BoostClassifier(BayesClassifier()), dataset='iris',split=0.7)
 
 
 # Now repeat the steps with a decision tree classifier.

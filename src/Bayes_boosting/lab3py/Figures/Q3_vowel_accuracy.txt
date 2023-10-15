@@ -1,11 +1,12 @@
-Trial: 0 Accuracy 29.9
-Trial: 10 Accuracy 35.1
-Trial: 20 Accuracy 36.4
-Trial: 30 Accuracy 31.8
-Trial: 40 Accuracy 34.4
-Trial: 50 Accuracy 30.5
-Trial: 60 Accuracy 25.3
-Trial: 70 Accuracy 38.3
-Trial: 80 Accuracy 33.8
-Trial: 90 Accuracy 29.9
-Final mean classification accuracy  32.8 with standard deviation 2.74
+Test classifieres: vowels
+Trial: 0 Accuracy 61
+Trial: 10 Accuracy 66.2
+Trial: 20 Accuracy 74
+Trial: 30 Accuracy 66.9
+Trial: 40 Accuracy 59.7
+Trial: 50 Accuracy 64.3
+Trial: 60 Accuracy 66.9
+Trial: 70 Accuracy 63.6
+Trial: 80 Accuracy 62.3
+Trial: 90 Accuracy 70.8
+Final mean classification accuracy  64.7 with standard deviation 4.03
