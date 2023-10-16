@@ -1,0 +1,29 @@
+Test Olivetti with Naive Bayes
+Trial: 0 Accuracy 88.3
+Trial: 10 Accuracy 90.8
+Trial: 20 Accuracy 85
+Trial: 30 Accuracy 89.2
+Trial: 40 Accuracy 89.2
+Trial: 50 Accuracy 84.2
+Trial: 60 Accuracy 91.7
+Trial: 70 Accuracy 82.5
+Trial: 80 Accuracy 81.7
+Trial: 90 Accuracy 86.7
+Final mean classification accuracy  87.7 with standard deviation 3.03
+
+Test Olivetti with Boosted Decisiontree
+Trial: 0 Accuracy 80
+Trial: 10 Accuracy 72.5
+Trial: 20 Accuracy 74.2
+Trial: 30 Accuracy 71.7
+Trial: 40 Accuracy 75.8
+Trial: 50 Accuracy 67.5
+Trial: 60 Accuracy 75.8
+Trial: 70 Accuracy 51.7
+Trial: 80 Accuracy 72.5
+Trial: 90 Accuracy 66.7
+Final mean classification accuracy  70.4 with standard deviation 6.67
+
+Test Olivetti with Boosted Bayes 
+Trial: 0 Accuracy 88.3
+Trial: 10 Accuracy 90.8

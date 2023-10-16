@@ -1,0 +1,22 @@
+FOR IRIS AND VOWELS:
+
+(1) improvement in classification accuracy? WHY?
+
+IRIS:
+Same or sligthly better in every case. max. improvement of 4.5 %-points for 50 %
+VOWELS:
+prominent improvements of max 30 %-points for Trial 80.
+
+(2) Differences in the decision boundaries
+
+IRIS:
+straigth line boundaries are modified to steps, more complex.
+VOWELS:
+
+
+(3) Can we make up for not using a more advanced model in the basic classifier (e.g. independent features) by using boosting?
+(I would say: Can we compensate simple models by boosting?)
+
+IRIS:
+
+VOWELS:

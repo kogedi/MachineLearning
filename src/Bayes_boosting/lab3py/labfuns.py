@@ -127,9 +127,9 @@ def fetchDataset(dataset='iris'):
             y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
             pcadim = 0
         elif dataset == 'olivetti':
-            X = genfromtxt('olivettifacesX.txt', delimiter=',')
+            X = genfromtxt('.\src\Bayes_boosting\lab3py\olivettifacesX.txt', delimiter=',')
             X = X/255
-            y = genfromtxt('olivettifacesY.txt', delimiter=',',dtype=np.int)
+            y = genfromtxt('.\src\Bayes_boosting\lab3py\olivettifacesY.txt', delimiter=',')#,dtype=np.int)
             pcadim = 20
         elif dataset == 'vowel':
             try:
@@ -157,9 +157,9 @@ def fetchDataset(dataset='iris'):
             y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
             pcadim = 0
         elif dataset == 'olivetti':
-            X = genfromtxt('olivettifacesX.txt', delimiter=',')
+            X = genfromtxt('./src/Bayes_boosting/lab3py/olivettifacesX.txt', delimiter=',')
             X = X/255
-            y = genfromtxt('olivettifacesY.txt', delimiter=',',dtype=np.int)
+            y = genfromtxt('./src/Bayes_boosting/lab3py/olivettifacesY.txt', delimiter=',')#,dtype=np.int)
             pcadim = 20
         elif dataset == 'vowel':
             try:
@@ -333,7 +333,7 @@ class DecisionTreeClassifier(object):
 
     def trainClassifier(self, Xtr, yTr, W=None):
         rtn = DecisionTreeClassifier()
-        rtn.classifier = tree.DecisionTreeClassifier(max_depth=Xtr.shape[1]/2+1)
+        rtn.classifier = tree.DecisionTreeClassifier(max_depth= int(Xtr.shape[1]/2+1))
         if W is None:
             rtn.classifier.fit(Xtr, yTr)
         else:
