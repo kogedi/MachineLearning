@@ -257,48 +257,48 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
     X,y,pcadim = fetchDataset(dataset)
     
-    # import matplotlib.pyplot as plt
-    # import pandas as pd
-    # from pandas.plotting import scatter_matrix
-    # from scipy import stats
-    # Xval = pd.DataFrame(X)
-    # yval = pd.DataFrame(y)
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    from pandas.plotting import scatter_matrix
+    from scipy import stats
+    Xval = pd.DataFrame(X)
+    yval = pd.DataFrame(y)
     
-    # #outlaier detection
-    # # Initialize empty arrays for lower and upper bounds for each feature
-    # lower_bounds = np.zeros(len(Xval.columns))
-    # upper_bounds = np.zeros(len(Xval.columns))
+    #outlaier detection
+    # Initialize empty arrays for lower and upper bounds for each feature
+    lower_bounds = np.zeros(len(Xval.columns))
+    upper_bounds = np.zeros(len(Xval.columns))
 
-    # # Calculate lower and upper bounds for each feature based on IQR
-    # for i, feature_name in enumerate(Xval.columns):
-    #     feature_data = Xval[feature_name]  # Extract the data for the current feature
-    #     Q1 = np.percentile(feature_data, 25)  # Calculate the 25th percentile
-    #     Q3 = np.percentile(feature_data, 75)  # Calculate the 75th percentile
-    #     IQR = Q3 - Q1  # Calculate the interquartile range
+    # Calculate lower and upper bounds for each feature based on IQR
+    for i, feature_name in enumerate(Xval.columns):
+        feature_data = Xval[feature_name]  # Extract the data for the current feature
+        Q1 = np.percentile(feature_data, 25)  # Calculate the 25th percentile
+        Q3 = np.percentile(feature_data, 75)  # Calculate the 75th percentile
+        IQR = Q3 - Q1  # Calculate the interquartile range
 
-    #     # Define lower and upper bounds for the current feature
-    #     lower_bounds[i] = Q1 - 1.15 * IQR
-    #     upper_bounds[i] = Q3 + 1.15 * IQR
+        # Define lower and upper bounds for the current feature
+        lower_bounds[i] = Q1 - 1.15 * IQR
+        upper_bounds[i] = Q3 + 1.15 * IQR
 
-    # # Print lower and upper bounds for each feature
-    # for i, feature_name in enumerate(Xval.columns):
-    #     print(f'Feature: {feature_name}, Lower Bound: {lower_bounds[i]}, Upper Bound: {upper_bounds[i]}')
+    # Print lower and upper bounds for each feature
+    for i, feature_name in enumerate(Xval.columns):
+        print(f'Feature: {feature_name}, Lower Bound: {lower_bounds[i]}, Upper Bound: {upper_bounds[i]}')
     
-    # # Exclude outliers from the data for each feature
-    # filtered_Xdata = Xval[
-    #     (Xval >= lower_bounds) & (Xval <= upper_bounds)
-    # ].dropna()
-    # # Get the indices of rows that were not filtered out
-    # indices_to_keep = filtered_Xdata.index
-    # # Filter yval based on the same indices to keep labels consistent
-    # filtered_Ydata = yval.loc[indices_to_keep]
+    # Exclude outliers from the data for each feature
+    filtered_Xdata = Xval[
+        (Xval >= lower_bounds) & (Xval <= upper_bounds)
+    ].dropna()
+    # Get the indices of rows that were not filtered out
+    indices_to_keep = filtered_Xdata.index
+    # Filter yval based on the same indices to keep labels consistent
+    filtered_Ydata = yval.loc[indices_to_keep]
 
     
-    # scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
-    # plt.show()  
+    scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
+    plt.show()  
     
-    # X =  filtered_Xdata.values
-    # y =  filtered_Ydata.values.reshape(-1)
+    X =  filtered_Xdata.values
+    y =  filtered_Ydata.values.reshape(-1)
         
 # Now, df_no_outliers does not contain rows with outliers in the specified column
 
