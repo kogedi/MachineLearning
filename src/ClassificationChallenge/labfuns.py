@@ -294,9 +294,11 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
     filtered_Ydata = yval.loc[indices_to_keep]
 
     
-    scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
-    plt.show()  
+    # scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
+    # plt.show()  
     
+   
+    # Reshape for the old code of lab3
     X =  filtered_Xdata.values
     y =  filtered_Ydata.values.reshape(-1)
         
@@ -330,11 +332,14 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
             pca.fit(xTr)
             xTr = pca.transform(xTr)
             xTe = pca.transform(xTe)
-
-        # Train
-        trained_classifier = classifier.trainClassifier(xTr, yTr)
-        # Predict
-        yPr = trained_classifier.classify(xTe)
+            
+        trained_classifier = classifier.fit(xTr, yTr)
+        yPr = classifier.predict(xTe)
+        
+        # # Train
+        # trained_classifier = classifier.trainClassifier(xTr, yTr)
+        # # Predict
+        # yPr = trained_classifier.classify(xTe)
 
         # Compute classification error
         if trial % 10 == 0:
@@ -352,7 +357,8 @@ def evaluateClassifier(trained_classifier,labellist,dataset='challengetest'):
     
 
     # Predict
-    yPr = trained_classifier.classify(xTe)
+    yPr = trained_classifier.predict(xTe)
+    #yPr = trained_classifier.classify(xTe)
 
     print("The labels are: ")
     print(yPr)

@@ -19,13 +19,36 @@ from lab3 import BoostClassifier, BayesClassifier
 # testClassifier(BayesClassifier(), dataset='challenge', split=0.7)
 # >> Very bad results... 7.41 % accuracy
 
-test1 = DecisionTreeClassifier()
+
+from sklearn.ensemble import RandomForestClassifier
+
+rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=13, n_jobs=-1)
+
 print("Test Challenge Data Decisiontree")
-testClassifier(test1, dataset='challenge', split=0.7)
-# >> 73.3 % accuracy, Good.
+testClassifier(rnd_clf, dataset='challenge', split=0.7)
+# Trial: 0 Accuracy 79.8
+# Trial: 10 Accuracy 80.7
+# Trial: 20 Accuracy 81.6
+# Trial: 30 Accuracy 83.4
+# Trial: 40 Accuracy 79.4
+# Trial: 50 Accuracy 81.6
+# Trial: 60 Accuracy 82.5
+# Trial: 70 Accuracy 83.4
+# Trial: 80 Accuracy 83.9
+# Trial: 90 Accuracy 81.2
+# Final mean classification accuracy  81.8 with standard deviation 2.08
 
 print("Evaluation Data set with Decisiontree Classification")
-evaluateClassifier(test1, labellist=['Boborg','Jorgsuto','Atsutobob'], dataset='challengetest')
+evaluateClassifier(rnd_clf, labellist=['Boborg','Jorgsuto','Atsutobob'], dataset='challengetest')
+
+
+# test1 = DecisionTreeClassifier()
+# print("Test Challenge Data Decisiontree")
+# testClassifier(test1, dataset='challenge', split=0.7)
+# # >> 73.3 % accuracy, Good.
+
+# print("Evaluation Data set with Decisiontree Classification")
+# evaluateClassifier(test1, labellist=['Boborg','Jorgsuto','Atsutobob'], dataset='challengetest')
 
 # print("Test Challenge Data Decisiontree")
 # testClassifier(SVMClassifier(), dataset='challenge', split=0.7)

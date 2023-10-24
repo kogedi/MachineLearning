@@ -169,7 +169,7 @@ class BayesClassifier(object):
 # Call the `testClassifier` and `plotBoundary` functions for this part.
 
 # print("Test classifieres: iris")
-testClassifier(BayesClassifier(), dataset='iris', split=0.7)
+#testClassifier(BayesClassifier(), dataset='iris', split=0.7)
 # plotBoundary(BayesClassifier(), dataset='iris',split=0.7)
 
 # print("Test classifieres: vowels")
