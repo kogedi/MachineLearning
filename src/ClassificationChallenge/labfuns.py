@@ -253,7 +253,7 @@ def plotGaussian(X,y,mu,sigma):
 # The function below, `testClassifier`, will be used to try out the different datasets.
 # `fetchDataset` can be provided with any of the dataset arguments `wine`, `iris`, `olivetti` and `vowel`.
 # Observe that we split the data into a **training** and a **testing** set.
-def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
+def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=20):
 
     X,y,pcadim = fetchDataset(dataset)
     
