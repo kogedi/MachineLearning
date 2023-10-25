@@ -11,7 +11,10 @@ from sklearn import decomposition, tree, svm
 import os
 import getpass
 import csv
-
+import matplotlib.pyplot as plt
+import pandas as pd
+from pandas.plotting import scatter_matrix
+from scipy import stats
 
 import seaborn as sns
 sns.set()
@@ -121,7 +124,7 @@ def fetchEvalDataset(dataset='challengetest'):
     
     if dataset == 'challengetest':
         try:
-            X = genfromtxt('.\src\ClassificationChallenge\EvaluateOnMe2.csv', delimiter=',')
+            X = genfromtxt('.\src\ClassificationChallenge\EvaluateOnMe2.csv', delimiter=',') # ChalXf2
         except FileNotFoundError:
             print("File not found!")   
     else:
@@ -257,10 +260,7 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
     X,y,pcadim = fetchDataset(dataset)
     
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    from pandas.plotting import scatter_matrix
-    from scipy import stats
+    #Pandas variables
     Xval = pd.DataFrame(X)
     yval = pd.DataFrame(y)
     
@@ -277,8 +277,8 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
         IQR = Q3 - Q1  # Calculate the interquartile range
 
         # Define lower and upper bounds for the current feature
-        lower_bounds[i] = Q1 - 1.15 * IQR
-        upper_bounds[i] = Q3 + 1.15 * IQR
+        lower_bounds[i] = Q1 - 1.33 * IQR
+        upper_bounds[i] = Q3 + 1.33 * IQR
 
     # Print lower and upper bounds for each feature
     for i, feature_name in enumerate(Xval.columns):
@@ -294,8 +294,8 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
     filtered_Ydata = yval.loc[indices_to_keep]
 
     
-    # scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
-    # plt.show()  
+    scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
+    plt.show()  
     
    
     # Reshape for the old code of lab3
@@ -314,8 +314,6 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
     # # Show the histograms
     # plt.show()
-    
-    
 
     means = np.zeros(ntrials,)
 
@@ -324,17 +322,18 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
         xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,split,trial)
 
         # Do PCA replace default value if user provides it
-        if dim > 0:
-            pcadim = dim
+        # if dim > 0:
+        #     pcadim = dim
 
-        if pcadim > 0:
-            pca = decomposition.PCA(n_components=pcadim)
-            pca.fit(xTr)
-            xTr = pca.transform(xTr)
-            xTe = pca.transform(xTe)
+        # if pcadim > 0:
+        #     pca = decomposition.PCA(n_components=pcadim)
+        #     pca.fit(xTr)
+        #     xTr = pca.transform(xTr)
+        #     xTe = pca.transform(xTe)
             
         trained_classifier = classifier.fit(xTr, yTr)
-        yPr = classifier.predict(xTe)
+        yPr = trained_classifier.predict(xTe)
+        #yPr = classifier.predict(xTe)
         
         # # Train
         # trained_classifier = classifier.trainClassifier(xTr, yTr)
@@ -353,11 +352,11 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
     
 def evaluateClassifier(trained_classifier,labellist,dataset='challengetest'):
 
-    xTe = fetchEvalDataset(dataset)
+    x = fetchEvalDataset(dataset)
     
 
     # Predict
-    yPr = trained_classifier.predict(xTe)
+    yPr = trained_classifier.predict(x)
     #yPr = trained_classifier.classify(xTe)
 
     print("The labels are: ")
@@ -371,15 +370,6 @@ def evaluateClassifier(trained_classifier,labellist,dataset='challengetest'):
         for element in yPr:
             csvwriter.writerow([labellist[int(element)-1]])
         
-    # # Open a new CSV file for writing
-    # csvfile = open(output_file_path, 'w', newline='')
-    # # Create a CSV writer object
-    # csvwriter = csv.writer(csvfile) 
-    # for label in range(len(yPr)):
-    #     # Write the modified data (without the first column) to the output CSV file
-    #     currentlabel = yPr[label]
-    #     csvwriter.writerows([currentlabel])
-            
     return yPr
 
 # ## Plotting the decision boundary

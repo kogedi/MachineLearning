@@ -22,24 +22,17 @@ from lab3 import BoostClassifier, BayesClassifier
 
 from sklearn.ensemble import RandomForestClassifier
 
-rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=13, n_jobs=-1)
+rnd_clf = RandomForestClassifier(n_estimators=1000, n_jobs=-1) #, max_leaf_nodes=13
 
 print("Test Challenge Data Decisiontree")
-testClassifier(rnd_clf, dataset='challenge', split=0.7)
-# Trial: 0 Accuracy 79.8
-# Trial: 10 Accuracy 80.7
-# Trial: 20 Accuracy 81.6
-# Trial: 30 Accuracy 83.4
-# Trial: 40 Accuracy 79.4
-# Trial: 50 Accuracy 81.6
-# Trial: 60 Accuracy 82.5
-# Trial: 70 Accuracy 83.4
-# Trial: 80 Accuracy 83.9
-# Trial: 90 Accuracy 81.2
-# Final mean classification accuracy  81.8 with standard deviation 2.08
+trained_clf = testClassifier(rnd_clf, dataset='challenge', split=0.7)
 
 print("Evaluation Data set with Decisiontree Classification")
-evaluateClassifier(rnd_clf, labellist=['Boborg','Jorgsuto','Atsutobob'], dataset='challengetest')
+evaluateClassifier(trained_clf, labellist=['Boborg','Jorgsuto','Atsutobob'], dataset='challengetest')
+
+
+
+
 
 
 # test1 = DecisionTreeClassifier()
