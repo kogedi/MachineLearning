@@ -1,0 +1,27 @@
+Which classifier (naive Bayes, decision tree or boosted versions) would you pick?
+Motivate from the followinf criteria:
+• Hmm.. Outliers
+• ?? Irrelevant inputs: part of the feature space is irrelevant
+• OK, ansered: Predictive power
+• Tackled a bit: Mixed types of data: binary, categorical or continuous features, etc.
+• Tackled a bit: Scalability: the dimension of the data, D, is large or the number of instances, N, is large, or both
+
+For the iris data set the Decisiontree had a 3%-points higher mean accuracy than Naive Bayes (92.4 % vs. 89.0 %). 
+For the boosted version, they reached the nearly the same accuracy of 94.7 % to 94.6 %, but 
+Bayes had a lower standard deviation of 2.82 compared to 3.65.
+
+As a result, for the simple, low dimensional iris-data set the boosted Bayes and Decisiontree classifier could be choosen,
+but Decisiontree is more favorable since its faster.
+
+For the vowels data set, Naive Bayes and Decisiontree had the nearly the same accuracy of 64.x %.
+By Boosting the DecisionTreeClassifier improves its accuracy much better to 86.6 compared to 80.2 % for the 
+BoostClassifier of Naive Bayes by still having a lower standarddeviation of 3.06 compared to 3.52 %
+
+So for the more complex vowel data set, the Boosted DecisionTreeClassifier boosted BayesClassifiershould be choosen.
+Since the DecisionTreeClassifier is just capable of categorical data, the high performance 
+for the vowel data is impressing. The dimensions of the vowels are not boolean so the Decisiontree boundary would be intersting.
+
+For the Olivetti Faces the boosted BayesClassifier is very time consuming, since the curse of dimensionality
+and does not improve the performance compared to Naive Base.
+So for high dimenional data the boosted BayesClassifier is not useful since it doesn't scale well.
+

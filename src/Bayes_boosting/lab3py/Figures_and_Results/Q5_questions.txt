@@ -1,0 +1,30 @@
+FOR IRIS AND VOWELS:
+
+(1) improvement in classification accuracy? WHY?
+
+IRIS:
+Yes, better performance for every trial, except Trial 20. There we have the same performance.
+Better performace, because weak classifiers are boosted by weighting the wrong classified data points
+to make a better classification for the wrong classified.
+VOWELS:
+Performance increased but mean still just at 80.2 %, leading to a wrong classification of arround 20 %, 
+which is very high and would not be acceptable for Optical Character Recognition (OCR).
+
+
+(2) Differences in the decision boundaries
+
+IRIS:
+By comparing the decision boundaries, there is a prominent change of the class 1 - class 2 decision boundary,
+taking the increase of x2 by raising x1 into account and considering the nonlinear decision boundary close to (x1,x2) = (1, -0.25).
+The boosted boundary is more complex and less general. As a result, a higher variance and lower bias is expected.
+VOWELS:
+Hard to interprete since decision boundarys are missing in the boosted plot. Maybe not all decision boundary are implemented.
+
+
+(3) Can we make up for not using a more advanced model in the basic classifier (e.g. independent features) by using boosting?
+(I would say: Can we compensate simple models by boosting?)
+
+IRIS:
+Yes, by boosting, complex anormalities of the data, as shown above, are taken into account. A simple basic classifier was not capable to cover this specialities, as seen in Q3.
+VOWELS:
+No, not possible in this case.
