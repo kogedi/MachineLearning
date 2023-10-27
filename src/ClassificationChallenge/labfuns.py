@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pandas.plotting import scatter_matrix
 from scipy import stats
+from sklearn.ensemble import RandomForestClassifier
 
 import seaborn as sns
 sns.set()
@@ -237,6 +238,7 @@ def scatter2D(X,y):
 
 
 def plotGaussian(X,y,mu,sigma):
+    
     labels = np.unique(y)
     Ncolors = len(labels)
     xx = np.arange(Ncolors)
@@ -257,7 +259,24 @@ def plotGaussian(X,y,mu,sigma):
 # `fetchDataset` can be provided with any of the dataset arguments `wine`, `iris`, `olivetti` and `vowel`.
 # Observe that we split the data into a **training** and a **testing** set.
 def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
+    """
+    A Test function for different Classifiers.
+    
+    Fetchs input data, drops outliers, plots the scatter matrix, splits data for training and test, 
+    performs PCA dimensionality reduction, trains a classifier and predicts output.
 
+    Args:
+    ------
+        classifier (classifier object): instance of the choosen classifier class
+        dataset (str, optional): dataset for fetchData, name has to be defined. Defaults to 'iris'.
+        dim (int, optional): dimension of the inputdata. Defaults to 0.
+        split (float, optional): Split ratio of training and test data. Defaults to 0.7.
+        ntrials (int, optional): number of trails to gain statistical certainty about accuracy. Defaults to 100.
+    
+    Examples 
+    --------
+    >>> trained_clf = testClassifier(rnd_clf, dataset='challenge', split=0.7)
+    """
     X,y,pcadim = fetchDataset(dataset)
     
     #Pandas variables
@@ -301,21 +320,9 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
     # Reshape for the old code of lab3
     X =  filtered_Xdata.values
     y =  filtered_Ydata.values.reshape(-1)
-        
-# Now, df_no_outliers does not contain rows with outliers in the specified column
-
-    # Create histograms for all columns in the DataFrame
-    # Xval.hist(bins=10, figsize=(30, 6))  # Adjust the number of bins and figure size as needed
     
-    # # Set labels and titles
-    # plt.suptitle('Histograms of DataFrame Columns')
-    # plt.xlabel('X-axis Label')
-    # plt.ylabel('Frequency')
-
-    # # Show the histograms
-    # plt.show()
-
-    means = np.zeros(ntrials,)
+    
+    means = np.zeros(ntrials,) # mean for accuracy calculation
 
     for trial in range(ntrials):
 
@@ -330,15 +337,15 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
         #     pca.fit(xTr)
         #     xTr = pca.transform(xTr)
         #     xTe = pca.transform(xTe)
-            
-        trained_classifier = classifier.fit(xTr, yTr)
-        yPr = trained_classifier.predict(xTe)
-        #yPr = classifier.predict(xTe)
         
-        # # Train
-        # trained_classifier = classifier.trainClassifier(xTr, yTr)
-        # # Predict
-        # yPr = trained_classifier.classify(xTe)
+        if type(classifier) is RandomForestClassifier:  
+            trained_classifier = classifier.fit(xTr, yTr)
+            yPr = trained_classifier.predict(xTe)
+        else:           
+            # Train
+            trained_classifier = classifier.trainClassifier(xTr, yTr)
+            # Predict
+            yPr = trained_classifier.classify(xTe)
 
         # Compute classification error
         if trial % 10 == 0:
@@ -354,10 +361,11 @@ def evaluateClassifier(trained_classifier,labellist,dataset='challengetest'):
 
     x = fetchEvalDataset(dataset)
     
-
     # Predict
-    yPr = trained_classifier.predict(x)
-    #yPr = trained_classifier.classify(xTe)
+    if type(trained_classifier) is RandomForestClassifier: 
+        yPr = trained_classifier.predict(x)
+    else:
+        yPr = trained_classifier.classify(x)
 
     print("The labels are: ")
     print(yPr)

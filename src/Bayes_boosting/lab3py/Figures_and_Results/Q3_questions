@@ -2,7 +2,6 @@ Feature independance:
 
 1. Feature independend means, that covariances are zero. The Off-Diagonal of the Covariance Matrix is zero.
 
-2. 
 
 Changing classifier: SVM
 More General Data

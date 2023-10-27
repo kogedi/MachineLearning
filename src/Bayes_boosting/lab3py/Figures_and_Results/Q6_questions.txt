@@ -11,12 +11,9 @@ prominent improvements of max 30 %-points for Trial 80.
 
 IRIS:
 straigth line boundaries are modified to steps, more complex.
-VOWELS:
+
 
 
 (3) Can we make up for not using a more advanced model in the basic classifier (e.g. independent features) by using boosting?
 (I would say: Can we compensate simple models by boosting?)
 
-IRIS:
-
-VOWELS:
