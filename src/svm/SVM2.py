@@ -42,7 +42,7 @@ inputs = inputs [ permute , : ]
 targets = targets [ permute ]
 
 
-# Berechnung der Kernelmatrix schon mit ti und tj 
+# Calculation of Kernelmatrix with ti and tj 
 P_kernel_matrix = svm1.calculate_P_kernel_matrix(inputs,targets)
 plt.matshow(numpy.log(numpy.abs(P_kernel_matrix)+1e-10))
 plt.show()

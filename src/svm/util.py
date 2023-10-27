@@ -5,9 +5,10 @@ from scipy.optimize import Bounds
 
 class SVM:
     def __init__(self, kernel_choice, exponent, sigma, slack_c):
-        """init of the Support Vector machine class
+        """Init of the Support Vector machine class
 
         Args:
+        -----
             kernel_choice (str): Choose kernal 'lin', 'poly', 'rbf'
             exponent (int): exponent of the polynomial
             sigma (scalar): smoothness of the radial basis function, part of the exponent
@@ -35,11 +36,13 @@ class SVM:
         """generates a polynomial Kernal
 
         Args:
+        -----
             arrayx (_array_): array of data
             arrayy (array): array of labels
             exponent (scalar): exponent, choose 2 or 3
 
         Returns:
+        --------
             scalar: polynomial Kernel result
         """
         ploy = (numpy.dot(numpy.transpose(arrayx),arrayy)+1)**self.exponent
@@ -50,10 +53,12 @@ class SVM:
         """Radial Basis Function (RBF) kernel is an exponential kernel
 
         Args:
+        -----
             arrayx (_array_): array of data
             arrayy (array): array of labels
 
         Returns:
+        --------
             scalar: exponential kernel result
         """
         rbf = numpy.exp(-(numpy.linalg.norm(arrayx-arrayy))**2/(2*self.sigma**2))
@@ -64,10 +69,12 @@ class SVM:
         """linear Kernel
 
         Args:
+        -----
             arrayx (_type_): _description_
             arrayy (_type_): _description_
 
         Returns:
+        --------
             scalar: _description_
         """
         return numpy.dot(arrayx, arrayy)
@@ -77,10 +84,12 @@ class SVM:
         """calculates the P-kernel matrix, necessary for the objective function
 
         Args:
+        -----
             data (array of [x,y]-entries): training data
             targets (vector): target labels to be learned
 
         Returns:
+        -------
             _type_: prestep for Kernelmatrix called "Pij"
         """
         N = data.shape[0]
@@ -97,12 +106,14 @@ class SVM:
         """calculates the scalar threshold value b
 
         Args:
+        -----
             alpha (vector): optimized values of alpha (decision variable)
             targets (vector): target values for data points
             kernel_matrix (matrix): already calculates Kernel matrix to safe computation
             s (vector): new data vector to be classified
 
         Returns:
+        -------
             b (scalar): threshold value b
         """
         #Choose one support vector out of the list
@@ -117,12 +128,14 @@ class SVM:
         """classification of a new data point s
 
         Args:
+        -----
             alpha (vector): optimal decision variables
             targets (vector): labels of the training data
             data (matrix): precalculated Kernel matrix
             s (vectors): new datapoint
 
         Returns:
+        --------
             scalar: indicates the class by larger or smaller Zero
         """
         indicator_s = 0.0
