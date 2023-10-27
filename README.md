@@ -1,4 +1,4 @@
-# Machine Learning (DD2421) 
+# KTH Machine Learning (DD2421) 
 
 1. Assigment: Decision Trees 
 
