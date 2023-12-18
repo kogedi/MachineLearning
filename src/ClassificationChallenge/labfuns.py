@@ -125,9 +125,9 @@ def fetchEvalDataset(dataset='challengetest'):
     
     if dataset == 'challengetest':
         try:
-            X = genfromtxt('.\src\ClassificationChallenge\EvaluateOnMe2.csv', delimiter=',') # ChalXf2
+            X = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/EvaluateOnMe2.csv', delimiter=',') # ChalXf2
         except FileNotFoundError:
-            print("File not found!")   
+            print("Challengetest-File not found!")   
     else:
             print("Please specify a dataset!")
             X = np.zeros(0)
@@ -145,20 +145,21 @@ def fetchDataset(dataset='iris'):
         
         if dataset == 'challenge':
             try:
-                X = genfromtxt('.\src\ClassificationChallenge\ChalXf2.csv', delimiter=',')
-                y = genfromtxt('.\src\ClassificationChallenge\ChalYf.csv', delimiter=',')
+                y = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/ChalYf.csv', delimiter=',')
+                X = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/ChalXf2.csv', delimiter=',')
+                
                 pcadim = 12
             except FileNotFoundError:
-                print("File not found!")
+                print("Challenge File not found!")
                       
         
         elif dataset == 'iris':
             try:
                 X = genfromtxt('.\src\Bayes_boosting\lab3py\irisX.txt', delimiter=',')
-                y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')-1 #,dtype=np.int
+                y = genfromtxt('.\src\Bayes_boosting\lab3py\irisY.txt', delimiter=',')#-1 #,dtype=np.int
                 pcadim = 2
             except FileNotFoundError:
-                print("File not found!")
+                print("iris-File not found!")
         elif dataset == 'wine':
             X = genfromtxt('wineX.txt', delimiter=',')
             y = genfromtxt('wineY.txt', delimiter=',',dtype=np.int)-1
@@ -369,7 +370,7 @@ def evaluateClassifier(trained_classifier,labellist,dataset='challengetest'):
 
     print("The labels are: ")
     print(yPr)
-    output_file_path = '.\src\ClassificationChallenge\classification.csv'
+    output_file_path = "C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/classification.csv"
 
     with open(output_file_path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
