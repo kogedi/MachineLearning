@@ -22,9 +22,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.datasets import load_iris  # Example dataset
 
+import torch
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
+import torch.nn as nn
+import torch.optim as optim
 
 import seaborn as sns
 sns.set()
+
+
 
 def plot_cov_ellipse(cov, pos, nstd=2, ax=None, **kwargs):
     """
@@ -127,11 +134,71 @@ def trteSplitEven(X,y,pcSplit,seed=None):
 
     return xTr,yTr,xTe,yTe,trIdx,teIdx
 
+# def equalweigtData(X,y):
+#     """Splits data into training and test set
+
+#     Args:
+#         X (_type_): Data features
+#         y (_type_): labels
+#         pcSplit (float [0, 1]): defines the percent of the data should be used as training data
+#         seed (_type_, optional): _description_. Defaults to None.
+
+#     Returns:
+#         _type_: _description_
+#     """
+#     labels = np.unique(y)
+#     xTr = np.zeros((0,X.shape[1]))
+    
+#     trIdx = np.zeros((0,),dtype=int)
+    
+#     for label in labels:
+#         classIdx = np.where(y==label)[0]
+#         NPerClass = len(classIdx)
+#         Ntr = int(np.rint(NPerClass*pcSplit))
+#         idx = np.random.permutation(NPerClass)
+#         trClIdx = classIdx[idx[:Ntr]]
+#         teClIdx = classIdx[idx[Ntr:]]
+#         trIdx = np.hstack((trIdx,trClIdx))
+#         teIdx = np.hstack((teIdx,teClIdx))
+#         # Split data
+#         xTr = np.vstack((xTr,X[trClIdx,:]))
+#         yTr = np.hstack((yTr,y[trClIdx]))
+        
+
+#     return xTr,yTr
+
+def balance_dataset(X, y):
+    unique_classes, class_counts = np.unique(y, return_counts=True)
+
+    # Find the class with the maximum samples
+    majority_class = unique_classes[np.argmax(class_counts)]
+    majority_class_count = np.max(class_counts)
+
+    # Identify minority classes
+    minority_classes = unique_classes[class_counts < majority_class_count]
+
+    # Oversample minority classes
+    for minority_class in minority_classes:
+        minority_indices = np.where(y == minority_class)[0]
+        oversampled_indices = np.random.choice(minority_indices, size=majority_class_count - len(minority_indices), replace=True)
+        X_oversampled = X[oversampled_indices]
+        y_oversampled = y[oversampled_indices]
+
+        X = np.vstack((X, X_oversampled))
+        y = np.concatenate((y, y_oversampled))
+
+    # Shuffle the dataset
+    shuffle_indices = np.random.permutation(len(X))
+    X = X[shuffle_indices]
+    y = y[shuffle_indices]
+
+    return X, y
+
 def fetchEvalDataset(dataset='challengetest'):
     
     if dataset == 'challengetest':
         try:
-            X = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/EvaluateOnMe2.csv', delimiter=',') # ChalXf2
+            X = genfromtxt('C:/Users/Konra/git_repos//MachineLearning/src/ClassificationChallenge/EvaluateOnMe2.csv', delimiter=',') # ChalXf2
         except FileNotFoundError:
             print("Challengetest-File not found!")   
     else:
@@ -188,11 +255,11 @@ def fetchDataset(dataset='iris'):
             y = np.zeros(0)
             pcadim = 0
             
-    elif username == 'claas-christophheitzhausen':
-        if dataset == 'iris':
+    elif username == 'Konra':
+        if dataset == 'challenge':
             try:
-                X = genfromtxt('./src/Bayes_boosting/lab3py/irisX.txt', delimiter=',')
-                y = genfromtxt('./src/Bayes_boosting/lab3py/irisY.txt', delimiter=',')-1 #,dtype=np.int
+                y = genfromtxt('C:/Users/Konra/git_repos/MachineLearning/src/ClassificationChallenge/ChalYf2.csv', delimiter=',')
+                X = genfromtxt('C:/Users/Konra/git_repos/MachineLearning/src/ClassificationChallenge/ChalXf2.csv', delimiter=',')
                 pcadim = 2
             except FileNotFoundError:
                 print("File not found!")
@@ -265,7 +332,7 @@ def plotGaussian(X,y,mu,sigma):
 # The function below, `testClassifier`, will be used to try out the different datasets.
 # `fetchDataset` can be provided with any of the dataset arguments `wine`, `iris`, `olivetti` and `vowel`.
 # Observe that we split the data into a **training** and a **testing** set.
-def testClassifier(classifier, usepredict, dataset='iris', dim=0, split=0.7, ntrials=100, filterrange=2): # 1.33
+def testClassifier(classifier, usepredict, NN, dataset='iris', dim=0, split=0.7, ntrials=100, filterrange=2): # 1.33
     """
     A Test function for different Classifiers.
     
@@ -321,7 +388,7 @@ def testClassifier(classifier, usepredict, dataset='iris', dim=0, split=0.7, ntr
 
     
     scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
-    #plt.show()  
+    plt.show()  
     
    
     # Reshape for the old code of lab3
@@ -330,10 +397,14 @@ def testClassifier(classifier, usepredict, dataset='iris', dim=0, split=0.7, ntr
     
     
     means = np.zeros(ntrials,) # mean for accuracy calculation
-
+    X, y = balance_dataset(X,y)
+    
     for trial in range(ntrials):
-
+        
+        
         xTr,yTr,xTe,yTe,trIdx,teIdx = trteSplitEven(X,y,split,trial)
+        
+
 
         # Do PCA replace default value if user provides it
         # if dim > 0:
@@ -344,16 +415,55 @@ def testClassifier(classifier, usepredict, dataset='iris', dim=0, split=0.7, ntr
         #     pca.fit(xTr)
         #     xTr = pca.transform(xTr)
         #     xTe = pca.transform(xTe)
-        
-        if usepredict == True:  
-            trained_classifier = classifier.fit(xTr, yTr)
-            yPr = trained_classifier.predict(xTe)
-        else:           
-            # Train
-            trained_classifier = classifier.trainClassifier(xTr, yTr)
-            # Predict
-            yPr = trained_classifier.classify(xTe)
-            pass
+        if NN == True:
+
+            # Define the loss function and optimizer
+            criterion = nn.CrossEntropyLoss()
+            optimizer = optim.SGD(classifier.parameters(), lr=0.01)
+
+            # Convert your data to PyTorch tensors
+            # Assuming you have training_data and labels as your data
+            # Make sure to convert them to torch tensors before training
+
+            # Training loop
+            num_epochs = 1000  # You can adjust the number of epochs as needed
+
+            for epoch in range(num_epochs):
+                # Forward pass
+                x_in = torch.tensor((xTr.shape[1]), dtype=torch.float32)
+                x_in = torch.from_numpy(np.float32(xTr))
+                outputs = classifier(x_in)
+                
+                y_in = torch.tensor((yTr.shape[0]), dtype=torch.int)
+                y_in = torch.from_numpy(np.int64(yTr))
+                loss = criterion(outputs, y_in)
+
+                # Backward pass and optimization
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                # Print the loss at every epoch
+                #print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+
+            # After training, you can use the model for predictions
+            # For example, if you have a test_data tensor:
+            x_ein = torch.tensor((xTe.shape[1]), dtype=torch.float32)
+            x_ein = torch.from_numpy(np.float32(xTe))
+            test_outputs = classifier(x_ein)
+            yPr_tensor = torch.argmax(test_outputs, dim=1)
+            yPr = np.array(yPr_tensor)
+        else:
+            if usepredict == True:  
+                trained_classifier = classifier.fit(xTr, yTr)
+                yPr = trained_classifier.predict(xTe)
+              
+            else:           
+                # Train
+                trained_classifier = classifier.trainClassifier(xTr, yTr)
+                # Predict
+                yPr = trained_classifier.classify(xTe)
+                pass
 
         # Compute classification error
         if trial % 10 == 0:
@@ -364,6 +474,7 @@ def testClassifier(classifier, usepredict, dataset='iris', dim=0, split=0.7, ntr
     print("Final mean classification accuracy ", "%.3g" % (np.mean(means)), "with standard deviation", "%.3g" % (np.std(means)))
     
     return trained_classifier
+    
     
 def evaluateClassifier(trained_classifier,usepredict, labellist,dataset='challengetest'):
 
@@ -377,14 +488,14 @@ def evaluateClassifier(trained_classifier,usepredict, labellist,dataset='challen
 
     print("The labels are: ")
     print(yPr)
-    output_file_path = "C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/classification.csv"
+    output_file_path = "C:/Users/Konra/git_repos/MachineLearning/src/ClassificationChallenge/classification.csv"
 
     with open(output_file_path, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
 
         # Writing each element as a separate row
         for element in yPr:
-            csvwriter.writerow([labellist[int(element)-1]])
+            csvwriter.writerow([labellist[int(element)]])
         
     return yPr
 
@@ -496,3 +607,41 @@ class SVMClassifier(object):
 
     def classify(self, X):
         return self.classifier.predict(X)
+    
+# Define the neural network architecture
+class NeuralNetwork(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(NeuralNetwork, self).__init__()
+        self.input_size        = 11
+        self.output_size       = 3
+        self.n_hidden_layers   = 5
+        self.n_neurons         = 128
+
+        # Create input layer with ReLU activation
+        self.input_layer = nn.Linear(self.input_size, self.n_neurons)
+        self.input_layer_activation = nn.ReLU()
+
+        # Create hidden layers with ReLU activation
+        self.hidden_layers = nn.ModuleList()
+        for _ in range(self.n_hidden_layers):
+            self.hidden_layers.append(nn.Linear(self.n_neurons, self.n_neurons))
+            self.hidden_layers.append(nn.ReLU())
+
+        # Create output layer
+        self.output_layer = nn.Linear(self.n_neurons, self.output_size)
+
+
+    def forward(self, input: torch.Tensor):
+        ''' Performs a forward computation '''
+
+        # Compute first layer
+        l_out = self.input_layer(input)
+        l_out = self.input_layer_activation(l_out)
+
+        # Compute hidden layers
+        for layer in self.hidden_layers:
+            l_out = layer(l_out)
+
+        # Compute output layer
+        out = self.output_layer(l_out)
+        return out
