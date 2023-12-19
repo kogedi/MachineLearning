@@ -3,7 +3,7 @@ import csv
 
 
 # Open the CSV file for reading
-with open('.\src\ClassificationChallenge\EvaluateOnMe.csv', 'r') as csvfile:
+with open('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/EvaluateOnMe.csv', 'r') as csvfile:
     # Create a CSV reader object
     csvreader = csv.reader(csvfile)
     data_without_first_column = []
@@ -11,13 +11,13 @@ with open('.\src\ClassificationChallenge\EvaluateOnMe.csv', 'r') as csvfile:
     # Iterate through rows in the CSV file
     for row in csvreader:
         # Exclude the first column and print the rest of the data
-        currentrow = row[1:] #without first element
-        newrow = currentrow[:-2] #
-        newrow.append(currentrow[-1])
-        data_without_first_column.append(newrow[:])
-        #print(data_without_first_column)
         
-output_file_path = '.\src\ClassificationChallenge\EvaluateOnMe2.csv'
+        
+        newrow = row[1:5] + row [6:-1]
+        
+        data_without_first_column.append(newrow[:])
+        
+output_file_path = 'C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/EvaluateOnMe2.csv'
 
 # Open a new CSV file for writing
 with open(output_file_path, 'w', newline='') as csvfile:

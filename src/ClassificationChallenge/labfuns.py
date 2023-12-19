@@ -17,6 +17,12 @@ from pandas.plotting import scatter_matrix
 from scipy import stats
 from sklearn.ensemble import RandomForestClassifier
 
+import xgboost as xgb
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.datasets import load_iris  # Example dataset
+
+
 import seaborn as sns
 sns.set()
 
@@ -145,7 +151,7 @@ def fetchDataset(dataset='iris'):
         
         if dataset == 'challenge':
             try:
-                y = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/ChalYf.csv', delimiter=',')
+                y = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/ChalYf2.csv', delimiter=',')
                 X = genfromtxt('C:/Users/Konrad Dittrich/git/repos/MachineLearning/src/ClassificationChallenge/ChalXf2.csv', delimiter=',')
                 
                 pcadim = 12
@@ -259,7 +265,7 @@ def plotGaussian(X,y,mu,sigma):
 # The function below, `testClassifier`, will be used to try out the different datasets.
 # `fetchDataset` can be provided with any of the dataset arguments `wine`, `iris`, `olivetti` and `vowel`.
 # Observe that we split the data into a **training** and a **testing** set.
-def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
+def testClassifier(classifier, usepredict, dataset='iris', dim=0, split=0.7, ntrials=100, filterrange=2): # 1.33
     """
     A Test function for different Classifiers.
     
@@ -297,8 +303,8 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
         IQR = Q3 - Q1  # Calculate the interquartile range
 
         # Define lower and upper bounds for the current feature
-        lower_bounds[i] = Q1 - 1.33 * IQR
-        upper_bounds[i] = Q3 + 1.33 * IQR
+        lower_bounds[i] = Q1 - filterrange * IQR
+        upper_bounds[i] = Q3 + filterrange * IQR
 
     # Print lower and upper bounds for each feature
     for i, feature_name in enumerate(Xval.columns):
@@ -315,7 +321,7 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
 
     
     scatter_matrix(filtered_Xdata,figsize=(6,4), diagonal='kde', c=filtered_Ydata, cmap='viridis')
-    plt.show()  
+    #plt.show()  
     
    
     # Reshape for the old code of lab3
@@ -339,7 +345,7 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
         #     xTr = pca.transform(xTr)
         #     xTe = pca.transform(xTe)
         
-        if type(classifier) is RandomForestClassifier:  
+        if usepredict == True:  
             trained_classifier = classifier.fit(xTr, yTr)
             yPr = trained_classifier.predict(xTe)
         else:           
@@ -347,6 +353,7 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
             trained_classifier = classifier.trainClassifier(xTr, yTr)
             # Predict
             yPr = trained_classifier.classify(xTe)
+            pass
 
         # Compute classification error
         if trial % 10 == 0:
@@ -358,15 +365,15 @@ def testClassifier(classifier, dataset='iris', dim=0, split=0.7, ntrials=100):
     
     return trained_classifier
     
-def evaluateClassifier(trained_classifier,labellist,dataset='challengetest'):
+def evaluateClassifier(trained_classifier,usepredict, labellist,dataset='challengetest'):
 
     x = fetchEvalDataset(dataset)
     
     # Predict
-    if type(trained_classifier) is RandomForestClassifier: 
+    if usepredict == True:
         yPr = trained_classifier.predict(x)
     else:
-        yPr = trained_classifier.classify(x)
+       yPr = trained_classifier.classify(x)
 
     print("The labels are: ")
     print(yPr)
